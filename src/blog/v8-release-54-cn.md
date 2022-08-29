@@ -30,7 +30,7 @@ V8 的 JavaScript 解析器中的内存管理得到了简化，以避免不必�
 
 我们[内部启动测试套件](https://www.youtube.com/watch?v=xCx4uC7mn6Y)衡量实际JavaScript性能的中位数提高了5%。这[速度计](http://browserbench.org/Speedometer/)基准测试也受益于这些优化，通过以下方式进行改进[~10% 至 13%，而 v5.2](https://chromeperf.appspot.com/report?sid=f5414b72e864ffaa4fd4291fa74bf3fd7708118ba534187d36113d8af5772c86\&start_rev=393766\&end_rev=416239).
 
-![](/\_img/v8-release-54/speedometer.png)
+![](../_img/v8-release-54/speedometer.png)
 
 ## V8 接口
 

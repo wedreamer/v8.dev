@@ -101,7 +101,7 @@ const y = object.y;
 
 为了避免这种情况，我们现在在不收集源位置的情况下编译字节码（假设没有附加调试器或探查器）。仅当实际生成堆栈跟踪时（例如，在调用时），才会收集源位置`Error.stack`或将异常的堆栈跟踪打印到控制台。这确实有一些成本，因为生成源位置需要重新分析和编译函数，但是大多数网站不会在生产中对堆栈跟踪进行符号化，因此看不到任何可观察到的性能影响。在我们的实验室测试中，我们看到 V8 的内存使用量减少了 1-2.5%。
 
-![Memory savings from lazy source positions on an AndroidGo device](/\_img/v8-release-78/memory-savings.svg)
+![Memory savings from lazy source positions on an AndroidGo device](../_img/v8-release-78/memory-savings.svg)
 
 ### 更快的正则表达式匹配失败
 

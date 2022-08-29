@@ -24,7 +24,7 @@
 
 下图显示了基本 JavaScript 对象在内存中的外观。
 
-![](/\_img/fast-properties/jsobject.png)
+![](../_img/fast-properties/jsobject.png)
 
 元素和属性存储在两个单独的数据结构中，这使得添加和访问属性或元素对于不同的使用模式更加高效。
 
@@ -45,21 +45,21 @@
 
 让我们来看看HiddenClass的重要部分。
 
-![](/\_img/fast-properties/hidden-class.png)
+![](../_img/fast-properties/hidden-class.png)
 
 在 V8 中，JavaScript 对象的第一个字段指向 HiddenClass。（实际上，对于 V8 堆上并由垃圾回收器管理的任何对象，都是如此。就属性而言，最重要的信息是第三位字段，它存储属性的数量，以及指向描述符数组的指针。描述符数组包含有关命名属性的信息，如名称本身和存储值的位置。请注意，我们在这里不跟踪整数索引属性，因此描述符数组中没有条目。
 
 关于HiddenClasses的基本假设是具有相同结构的对象 - 例如，以相同顺序相同的命名属性 - 共享相同的HiddenClass。为了实现这一点，当一个属性被添加到一个对象时，我们使用一个不同的HiddenClass。在下面的示例中，我们从一个空对象开始，并添加三个命名属性。
 
-![](/\_img/fast-properties/adding-properties.png)
+![](../_img/fast-properties/adding-properties.png)
 
 每次添加新属性时，对象的 HiddenClass 都会更改。在后台，V8 创建了一个将 HiddenClasses 链接在一起的过渡树。V8 知道在将属性 “a” 添加到空对象时要采用哪个 HiddenClass。此过渡树可确保在以相同的顺序添加相同的属性时，最终会得到相同的最终 HiddenClass。下面的示例显示，即使我们在两者之间添加简单的索引属性，我们也会遵循相同的过渡树。
 
-![](/\_img/fast-properties/transitions.png)
+![](../_img/fast-properties/transitions.png)
 
 但是，如果我们创建一个新对象，该对象添加了不同的属性，则在本例中为属性`"d"`，V8 为新的 HiddenClasses 创建了一个单独的分支。
 
-![](/\_img/fast-properties/transition-trees.png)
+![](../_img/fast-properties/transition-trees.png)
 
 **本节要点：**
 
@@ -75,11 +75,11 @@
 
 **对象内属性与常规属性：**V8 支持所谓的对象内属性，这些属性直接存储在对象本身上。这些是 V8 中可用的最快属性，因为它们无需任何间接寻址即可访问。对象内属性的数量由对象的初始大小预先确定。如果添加的属性多于对象中的空间，则这些属性将存储在属性存储区中。属性存储添加一个间接层，但可以独立增长。
 
-![](/\_img/fast-properties/in-object-properties.png)
+![](../_img/fast-properties/in-object-properties.png)
 
 **快速与慢速属性：**下一个重要的区别是快速属性和慢速属性之间的区别。通常，我们将存储在线性属性存储中的属性定义为“快速”。快速属性只需通过属性存储中的索引即可访问。要从属性的名称获取属性存储区中的实际位置，我们必须查阅 HiddenClass 上的描述符数组，如前所述。
 
-![](/\_img/fast-properties/fast-vs-slow-properties.png)
+![](../_img/fast-properties/fast-vs-slow-properties.png)
 
 但是，如果在对象中添加和删除了许多属性，则可能会产生大量的时间和内存开销来维护描述符数组和HiddenClasses。因此，V8 还支持所谓的慢属性。具有慢速属性的对象具有自包含的字典作为属性存储。所有属性元信息不再存储在 HiddenClass 上的描述符数组中，而是直接存储在属性字典中。因此，可以在不更新 HiddenClass 的情况下添加和删除属性。由于内联缓存不能与字典属性一起使用，因此后者通常比快速属性慢。
 
@@ -111,7 +111,7 @@ console.log(o[2]);          // Prints 'c'.
 console.log(o[3]);          // Prints undefined
 ```
 
-![](/\_img/fast-properties/hole.png)
+![](../_img/fast-properties/hole.png)
 
 简而言之，如果接收器上不存在属性，我们必须继续查看原型链。假设元素是自包含的，例如，我们不在HiddenClass上存储有关当前索引属性的信息，我们需要一个名为the_hole的特殊值来标记不存在的属性。这对于数组函数的性能至关重要。如果我们知道没有孔，即元素存储是打包的，我们可以执行本地操作，而无需在原型链上进行昂贵的查找。
 
@@ -147,7 +147,7 @@ const b2 = [1.1,  , 3];  // Double Holey, b2[1] reads from the prototype
 
 **元素访问器：**您可以想象，我们并不完全热衷于在C++中编写数组函数20次，每次一次[元素种类](/blog/elements-kinds).这就是一些C++魔力发挥作用的地方。我们没有一遍又一遍地实现 Array 函数，而是构建了`ElementsAccessor`在这里，我们主要只需要实现从后备存储访问元素的简单函数。这`ElementsAccessor`依赖[断续器](https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern)以创建每个 Array 函数的专用版本。所以如果你称之为类似的东西`slice`在数组上，V8 在内部调用用 C++ 编写的内置，并通过`ElementsAccessor`到函数的专用版本：
 
-![](/\_img/fast-properties/elements-accessor.png)
+![](../_img/fast-properties/elements-accessor.png)
 
 **本节要点：**
 

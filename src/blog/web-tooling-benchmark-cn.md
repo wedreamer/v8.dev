@@ -41,7 +41,7 @@ value = items[items.length - 1];
 
 我们非常关注实际性能，尤其是改进流行的 Node.js工作负载，这体现在 V8 在基准测试上的得分在过去几个版本中的不断提高：
 
-![](/\_img/web-tooling-benchmark/chart.svg)
+![](../_img/web-tooling-benchmark/chart.svg)
 
 自 V8 v5.8 起，这是之前的最后一个 V8 版本[切换到点火+涡轮风扇架构](/blog/launching-ignition-and-turbofan)，V8在工具基准测试上的得分提高了大约**60%**.
 

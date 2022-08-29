@@ -31,7 +31,7 @@ function mapAdd(a, x) {
 
 请注意，`x`是局部闭包的自由变量`y => y + x`.V8 v7.1 现在可以完全消除`x`，最多可提高**40%**在某些情况下。
 
-![Performance improvement with new escape analysis (lower is better)](/\_img/v8-release-71/improved-escape-analysis.svg)
+![Performance improvement with new escape analysis (lower is better)](../_img/v8-release-71/improved-escape-analysis.svg)
 
 转义分析现在还能够消除变量索引访问局部数组的某些情况。下面是一个示例：
 

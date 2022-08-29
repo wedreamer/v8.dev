@@ -132,19 +132,19 @@ http.createServer(async (req, res) => {
 
 我们已经设法在 V8 v5.5（Chrome 55 & Node.js 7） 和 V8 v6.8 （Chrome 68 & Node.js 10） 之间显著提高了异步代码的性能。我们达到了一个性能水平，开发人员可以安全地使用这些新的编程范例，而不必担心速度。
 
-![](/\_img/fast-async/doxbee-benchmark.svg)
+![](../_img/fast-async/doxbee-benchmark.svg)
 
 上图显示了[doxbee benchmark](https://github.com/v8/promise-performance-tests/blob/master/lib/doxbee-async.js)，用于衡量大量承诺代码的性能。请注意，图表可视化执行时间，这意味着越低越好。
 
 结果[并行基准测试](https://github.com/v8/promise-performance-tests/blob/master/lib/parallel-async.js)，其中特别强调性能[`Promise.all()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all)，更令人兴奋：
 
-![](/\_img/fast-async/parallel-benchmark.svg)
+![](../_img/fast-async/parallel-benchmark.svg)
 
 我们设法改进`Promise.all`性能系数**8×**.
 
 但是，上述基准是合成的微观基准。V8 团队对我们的优化如何影响更感兴趣[实际用户代码的实际性能](/blog/real-world-performance).
 
-![](/\_img/fast-async/http-benchmarks.svg)
+![](../_img/fast-async/http-benchmarks.svg)
 
 上图显示了一些流行的HTTP中间件框架的性能，这些框架大量使用承诺和`async`功能。请注意，此图显示每秒的请求数，因此与前面的图表不同，越高越好。这些框架的性能在 Node.js 7 （V8 v5.5） 和 Node.js 10 （V8 v6.8） 之间显著提高。
 
@@ -175,11 +175,11 @@ p.then(() => console.log('tick:a'))
 
 因为`p`已实现，您可能希望它打印`'after:await'`首先，然后是`'tick'`s.事实上，这就是你在 Node.js 8 中得到的行为：
 
-![The await bug in Node.js 8](/\_img/fast-async/await-bug-node-8.svg)
+![The await bug in Node.js 8](../_img/fast-async/await-bug-node-8.svg)
 
 尽管此行为看起来很直观，但根据规范，它是不正确的。Node.js 10 实现了正确的行为，即首先执行链接的处理程序，然后才继续执行异步函数。
 
-![Node.js 10 no longer has the await bug](/\_img/fast-async/await-bug-node-10.svg)
+![Node.js 10 no longer has the await bug](../_img/fast-async/await-bug-node-10.svg)
 
 这*“正确的行为”*可以说不是很明显，实际上让JavaScript开发人员感到惊讶，所以它值得一些解释。在我们深入探讨承诺和异步函数的神奇世界之前，让我们从一些基础开始。
 
@@ -187,7 +187,7 @@ p.then(() => console.log('tick:a'))
 
 在高层次上有*任务*和*微任务*在 JavaScript 中。任务处理 I/O 和计时器等事件，并一次执行一个。微任务实现 延迟执行`async`/`await`并承诺，并在每个任务结束时执行。在执行返回到事件循环之前，始终清空微任务队列。
 
-![The difference between microtasks and tasks](/\_img/fast-async/microtasks-vs-tasks.svg)
+![The difference between microtasks and tasks](../_img/fast-async/microtasks-vs-tasks.svg)
 
 有关更多详细信息，请查看Jake Archibald的解释[浏览器中的任务、微任务、队列和计划](https://jakearchibald.com/2015/tasks-microtasks-queues-and-schedules/).Node.js 中的任务模型非常相似。
 
@@ -290,7 +290,7 @@ async function foo(v) {
 
 首先，V8 将此函数标记为*可恢复*，这意味着可以暂停执行，稍后再恢复（在`await`点）。然后它创造了所谓的`implicit_promise`，这是调用异步函数时返回的 promise，它最终解析为 async 函数生成的值。
 
-![Comparison between a simple async function and what the engine turns it into](/\_img/fast-async/await-under-the-hood.svg)
+![Comparison between a simple async function and what the engine turns it into](../_img/fast-async/await-under-the-hood.svg)
 
 然后是有趣的一点：实际`await`.首先将值传递给`await`被包裹成一个承诺。然后，将处理程序附加到此包装的 promise，以便在 promise 实现后恢复该函数，并暂停 async 函数的执行，返回`implicit_promise`给调用方。一旦`promise`完成，则使用值恢复异步函数的执行`w`从`promise`，以及`implicit_promise`通过`w`.
 
@@ -302,63 +302,63 @@ async function foo(v) {
 
 让我们逐步完成各个操作。假设正在被的东西`await`ed已经是一个承诺，它的价值已经实现`42`.然后，引擎将创建一个新的`promise`并用任何存在的东西解决这个问题`await`编辑。这在下一轮时将这些承诺的延迟链接，通过规范所称的[`PromiseResolveThenableJob`](https://tc39.es/ecma262/#sec-promiseresolvethenablejob).
 
-![](/\_img/fast-async/await-step-1.svg)
+![](../_img/fast-async/await-step-1.svg)
 
 然后引擎创建另一个所谓的`throwaway`承诺。它被称为*一次性*因为没有任何东西被束缚在它上面 - 它完全是引擎内部的。这`throwaway`然后，承诺被链接到`promise`，并使用适当的处理程序恢复异步函数。这`performPromiseThen`操作本质上是什么[`Promise.prototype.then()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/then)确实如此，在幕后。最后，暂停异步函数的执行，并将控制权返回给调用方。
 
-![](/\_img/fast-async/await-step-2.svg)
+![](../_img/fast-async/await-step-2.svg)
 
 调用方中的执行继续，最终调用堆栈变为空。然后JavaScript引擎开始运行微任务：它运行先前计划的内容[`PromiseResolveThenableJob`](https://tc39.es/ecma262/#sec-promiseresolvethenablejob)，这将安排新的[`PromiseReactionJob`](https://tc39.es/ecma262/#sec-promisereactionjob)以链接`promise`到传递给的值上`await`.然后，引擎返回到处理微任务队列，因为在继续主事件循环之前必须清空微任务队列。
 
-![](/\_img/fast-async/await-step-3.svg)
+![](../_img/fast-async/await-step-3.svg)
 
 接下来是[`PromiseReactionJob`](https://tc39.es/ecma262/#sec-promisereactionjob)，它满足`promise`从承诺的价值，我们是`await`ing —`42`在这种情况下 — 并将反应安排到`throwaway`承诺。然后，引擎再次返回到微任务循环，其中包含要处理的最终微任务。
 
-![](/\_img/fast-async/await-step-4-final.svg)
+![](../_img/fast-async/await-step-4-final.svg)
 
 现在这一秒[`PromiseReactionJob`](https://tc39.es/ecma262/#sec-promisereactionjob)将分辨率传播到`throwaway`promise，并恢复异步函数的挂起执行，返回值`42`从`await`.
 
-![Summary of the overhead of await](/\_img/fast-async/await-overhead.svg)
+![Summary of the overhead of await](../_img/fast-async/await-overhead.svg)
 
 总结我们学到的东西，对于每个`await`引擎必须创建**两个额外的**承诺（即使右手边已经是承诺）并且它需要**至少三个**微任务队列滴答声。谁知道单身`await`表达式导致*那么多的开销*?!
 
-![](/\_img/fast-async/await-code-before.svg)
+![](../_img/fast-async/await-code-before.svg)
 
 让我们来看看这个开销来自哪里。第一行负责创建包装器承诺。第二行立即解析包装器承诺与`await`ed 值`v`.这两条线负责一个额外的承诺加上三个微分中的两个。如果`v`已经是一个承诺（这是常见的情况，因为应用程序通常`await`承诺）。在不太可能的情况下，开发人员`await`s 上，例如`42`，引擎仍然需要将其包装成一个承诺。
 
 事实证明，已经有一个[`promiseResolve`](https://tc39.es/ecma262/#sec-promise-resolve)规范中仅在需要时执行包装的操作：
 
-![](/\_img/fast-async/await-code-comparison.svg)
+![](../_img/fast-async/await-code-comparison.svg)
 
 此操作返回未更改的 promise，并且仅在必要时将其他值包装到 promise 中。通过这种方式，您可以保存其中一个附加承诺，加上微任务队列上的两个刻度线，用于将值传递给的常见情况`await`已经是一个承诺。此新行为已[在 V8 v7.2 中默认启用](/blog/v8-release-72#async%2Fawait).对于 V8 v7.1，可以使用`--harmony-await-optimization`旗。我们已经[建议对 ECMAScript 规范进行此更改](https://github.com/tc39/ecma262/pull/1250)也。
 
 以下是新的和改进的方法`await`幕后工作，一步一步：
 
-![](/\_img/fast-async/await-new-step-1.svg)
+![](../_img/fast-async/await-new-step-1.svg)
 
 让我们再次假设我们`await`一个承诺，已经实现`42`.多亏了神奇的[`promiseResolve`](https://tc39.es/ecma262/#sec-promise-resolve)这`promise`现在只是指同样的应许`v`，因此此步骤中无需执行任何操作。之后，引擎继续像以前一样，创建`throwaway`承诺，调度一个[`PromiseReactionJob`](https://tc39.es/ecma262/#sec-promisereactionjob)在微任务队列的下一个 tick 上恢复异步函数，暂停函数的执行，然后返回调用方。
 
-![](/\_img/fast-async/await-new-step-2.svg)
+![](../_img/fast-async/await-new-step-2.svg)
 
 然后，最终当所有JavaScript执行完成时，引擎开始运行微任务，因此它执行[`PromiseReactionJob`](https://tc39.es/ecma262/#sec-promisereactionjob).此作业传播分辨率`promise`自`throwaway`，然后恢复异步函数的执行，从而产生`42`从`await`.
 
-![Summary of the reduction in await overhead](/\_img/fast-async/await-overhead-removed.svg)
+![Summary of the reduction in await overhead](../_img/fast-async/await-overhead-removed.svg)
 
 此优化避免了在将值传递给`await`已经是一个承诺，在这种情况下，我们从最低限度**三**微分流到只是**一**微滴答。此行为类似于 Node.js 8 所做的，只是现在它不再是一个错误 - 它现在是一个正在标准化的优化！
 
 它仍然感觉不对，引擎必须创建这个`throwaway`承诺，尽管完全是引擎的内部。事实证明，`throwaway`承诺只是为了满足内部的API约束`performPromiseThen`规范中的操作。
 
-![](/\_img/fast-async/await-optimized.svg)
+![](../_img/fast-async/await-optimized.svg)
 
 最近在一个[编辑更改](https://github.com/tc39/ecma262/issues/694)到 ECMAScript 规范。引擎不再需要创建`throwaway`承诺`await`— 大多数时候\[^2]。
 
 \[^2]：V8 仍然需要创建`throwaway`承诺如果[`async_hooks`](https://nodejs.org/api/async_hooks.html)正在 Node.js 中使用，因为`before`和`after`钩子在*上下文*的`throwaway`承诺。
 
-![Comparison of await code before and after the optimizations](/\_img/fast-async/node-10-vs-node-12.svg)
+![Comparison of await code before and after the optimizations](../_img/fast-async/node-10-vs-node-12.svg)
 
 比较`await`在节点中.js 10 到优化`await`这很可能在 Node 中.js 12 显示了此更改对性能的影响：
 
-![](/\_img/fast-async/benchmark-optimization.svg)
+![](../_img/fast-async/benchmark-optimization.svg)
 
 **`async`/`await`现在优于手写的承诺代码**.这里的关键是，我们通过修补规范，显著降低了异步函数的开销 ——不仅在 V8 中，而且在所有 JavaScript 引擎中。
 
@@ -368,7 +368,7 @@ async function foo(v) {
 
 除了性能之外，JavaScript开发人员还关心诊断和修复问题的能力，这在处理异步代码时并不总是那么容易。[Chrome DevTools](https://developers.google.com/web/tools/chrome-devtools)支持*异步堆栈跟踪*，即堆栈跟踪，其中不仅包括堆栈的当前同步部分，还包括异步部分：
 
-![](/\_img/fast-async/devtools.png)
+![](../_img/fast-async/devtools.png)
 
 这是本地开发过程中非常有用的功能。但是，一旦部署了应用程序，此方法并不能真正帮助您。在事后调试期间，您只会看到`Error#stack`输出在日志文件中，这并不能告诉您有关异步部分的任何信息。
 

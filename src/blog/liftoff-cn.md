@@ -33,7 +33,7 @@ V8 编译 WebAssembly 的方法依赖于*涡轮风扇*，我们为JavaScript和a
 
 Liftoff的目标是通过尽可能快地生成代码来减少基于WebAssembly的应用程序的启动时间。代码质量是次要的，因为无论如何，热代码最终都会用TurboFan重新编译。Liftoff 避免了构建 IR 的时间和内存开销，并在 WebAssembly 函数的字节码上的一次传递中生成机器代码。
 
-![The Liftoff compilation pipeline is much simpler compared to the TurboFan compilation pipeline.](/\_img/liftoff/pipeline.svg)
+![The Liftoff compilation pipeline is much simpler compared to the TurboFan compilation pipeline.](../_img/liftoff/pipeline.svg)
 
 从上图可以明显看出，Liftoff应该能够比TurboFan更快地生成代码，因为管道仅由两个阶段组成。事实上，*函数体解码器*对原始WebAssembly字节进行单次传递，并通过回调与后续阶段进行交互，因此*代码生成*执行*解码和验证时*函数体。与WebAssembly一起*[流式处理接口](/blog/v8-release-65)*，这允许 V8 在通过网络下载时将 WebAssembly 代码编译为机器代码。
 
@@ -43,7 +43,7 @@ Liftoff是一个简单的代码生成器，而且速度很快。它只对函数�
 
 让我们通过一个非常简单的函数来看看Liftoff如何为此生成代码。
 
-![](/\_img/liftoff/example-1.svg)
+![](../_img/liftoff/example-1.svg)
 
 此示例函数采用两个参数并返回其总和。当 Liftoff 解码此函数的字节时，它首先根据 WebAssembly 函数的调用约定初始化局部变量的内部状态。对于 x64，V8 的调用约定传递寄存器中的两个参数*拉克斯*和*断续器*.
 
@@ -55,7 +55,7 @@ Liftoff是一个简单的代码生成器，而且速度很快。它只对函数�
 
 让我们看一个例子。
 
-![](/\_img/liftoff/example-2.svg)
+![](../_img/liftoff/example-2.svg)
 
 上面的示例假定一个虚拟堆栈在操作数堆栈上具有两个值。在开始新块之前，虚拟堆栈上的最高值将作为参数弹出到`if`指令。剩余的堆栈值需要放在另一个寄存器中，因为它当前正在隐藏第一个参数，但是当分支回此状态时，我们可能需要为堆栈值和参数保留两个不同的值。在这种情况下，Liftoff 选择将其重复数据删除到*rcx*注册。然后对此状态进行快照，并在块内修改活动状态。在块的末尾，我们隐式分支回父块，因此我们通过移动寄存器将当前状态合并到快照中。*断续器*到*rcx*和重新加载寄存器*断续器*从堆栈帧。
 
@@ -73,7 +73,7 @@ Liftoff是一个简单的代码生成器，而且速度很快。它只对函数�
 
 下图显示了编译和执行的痕迹[EpicZenGarden基准测试](https://s3.amazonaws.com/mozilla-games/ZenGarden/EpicZenGarden.html).它表明，在Liftoff编译之后，我们可以实例化WebAssembly模块并开始执行它。TurboFan编译仍然需要几秒钟的时间，因此在分层期间，观察到的执行性能会逐渐增加，因为各个TurboFan功能一完成就会被使用。
 
-![](/\_img/liftoff/tierup-liftoff-turbofan.png)
+![](../_img/liftoff/tierup-liftoff-turbofan.png)
 
 ## 性能
 
@@ -94,9 +94,9 @@ Liftoff是一个简单的代码生成器，而且速度很快。它只对函数�
 
 下图显示了这些基准测试的结果。每个基准测试执行了三次，我们报告平均编译时间。
 
-![Code generation performance of Liftoff vs. TurboFan on a MacBook](/\_img/liftoff/performance-unity-macbook.svg)
+![Code generation performance of Liftoff vs. TurboFan on a MacBook](../_img/liftoff/performance-unity-macbook.svg)
 
-![Code generation performance of Liftoff vs. TurboFan on a Z840](/\_img/liftoff/performance-unity-z840.svg)
+![Code generation performance of Liftoff vs. TurboFan on a Z840](../_img/liftoff/performance-unity-z840.svg)
 
 正如预期的那样，Liftoff编译器在高端台式机工作站和MacBook上生成代码的速度要快得多。Liftoff对TurboFan的加速在功能较差的MacBook硬件上甚至更大。
 
@@ -116,11 +116,11 @@ Liftoff是一个简单的代码生成器，而且速度很快。它只对函数�
 
 和以前一样，我们执行每个基准测试三次，并使用三次运行的平均值。由于基准之间记录的数字规模差异很大，因此我们报告*升降与涡轮风扇的相对性能*.值*+30%*这意味着Liftoff代码的运行速度比TurboFan慢30%。负数表示 Liftoff 执行速度更快。结果如下：
 
-![Liftoff Performance on Unity](/\_img/liftoff/performance-unity-compile.svg)
+![Liftoff Performance on Unity](../_img/liftoff/performance-unity-compile.svg)
 
 在Unity上，Liftoff代码在台式机器上的平均执行速度比TurboFan代码慢50%左右，在MacBook上慢70%。有趣的是，有一种情况（曼德布洛特脚本）的Liftoff代码优于TurboFan代码。这可能是一个异常值，例如，TurboFan的寄存器分配器在热循环中表现不佳。我们正在调查是否可以改进TurboFan以更好地处理此案。
 
-![Liftoff Performance on PSPDFKit](/\_img/liftoff/performance-pspdfkit-compile.svg)
+![Liftoff Performance on PSPDFKit](../_img/liftoff/performance-pspdfkit-compile.svg)
 
 在 PSPDFKit 基准测试中，Liftoff 代码的执行速度比优化代码慢 18-54%，而初始化则如预期的那样显著改进。这些数字表明，对于也通过JavaScript调用与浏览器交互的实际代码，未优化代码的性能损失通常低于计算密集型基准测试。
 

@@ -180,7 +180,7 @@ Sparkplug实际上很少生成自己的代码。JavaScript语义很复杂，即�
 
 使用Sparkplug，速度计分数提高了5-10%，具体取决于我们正在查看的机器人。
 
-![Median improvement in Speedometer score with Sparkplug, across several performance bots. Error bars indicate inter-quartile range.](/\_img/sparkplug/benchmark-speedometer.svg)
+![Median improvement in Speedometer score with Sparkplug, across several performance bots. Error bars indicate inter-quartile range.](../_img/sparkplug/benchmark-speedometer.svg)
 
 # 浏览基准测试
 
@@ -191,7 +191,7 @@ Sparkplug实际上很少生成自己的代码。JavaScript语义很复杂，即�
 结果是多种多样的，并且非常依赖于机器和网站，但总的来说，它们看起来很棒：我们看到大约5-15%的改进。
 
 ：：： 图 V8 主线程时间在我们的浏览基准测试中位数改进，重复 10 次。误差线表示四分位数范围。
-![Result for linux-perf bot](/\_img/sparkplug/benchmark-browsing-linux-perf.svg) ![Result for win-10-perf bot](/\_img/sparkplug/benchmark-browsing-win-10-perf.svg) ![Result for benchmark-browsing-mac-10\_13\_laptop_high_end-perf bot](/\_img/sparkplug/benchmark-browsing-mac-10\_13\_laptop_high_end-perf.svg) ![Result for mac-10\_12\_laptop_low_end-perf bot](/\_img/sparkplug/benchmark-browsing-mac-10\_12\_laptop_low_end-perf.svg) ![Result for mac-m1\_mini\_2020 bot](/\_img/sparkplug/benchmark-browsing-mac-m1\_mini\_2020-perf.svg)
+![Result for linux-perf bot](../_img/sparkplug/benchmark-browsing-linux-perf.svg) ![Result for win-10-perf bot](../_img/sparkplug/benchmark-browsing-win-10-perf.svg) ![Result for benchmark-browsing-mac-10\_13\_laptop_high_end-perf bot](../_img/sparkplug/benchmark-browsing-mac-10\_13\_laptop_high_end-perf.svg) ![Result for mac-10\_12\_laptop_low_end-perf bot](../_img/sparkplug/benchmark-browsing-mac-10\_12\_laptop_low_end-perf.svg) ![Result for mac-m1\_mini\_2020 bot](../_img/sparkplug/benchmark-browsing-mac-m1\_mini\_2020-perf.svg)
 :::
 
 总而言之：V8 有一个新的超快非优化编译器，它将 V8 在实际基准测试上的性能提高了 5-15%。它已经在 V8 v9.1 中可用`--sparkplug`标记，我们将在Chrome 91中推出它。

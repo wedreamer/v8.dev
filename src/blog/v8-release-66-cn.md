@@ -100,7 +100,7 @@ string.trim();
 
 我们设法为承诺和异步函数挤出了一些不错的性能改进，特别是设法缩小了异步函数和去糖化承诺链之间的差距。
 
-![Promise performance improvements](/\_img/v8-release-66/promise.svg)
+![Promise performance improvements](../_img/v8-release-66/promise.svg)
 
 此外，异步生成器和异步迭代的性能也得到了显著提高，使其成为即将推出的 Node 10 LTS 的可行选择，该 LTS 计划包括 V8 v6.6。例如，考虑以下斐波那契数列实现：
 
@@ -123,7 +123,7 @@ async function fibonacci(id, n) {
 
 我们测量了此模式在 Babel 转译之前和之后的以下改进：
 
-![Async generator performance improvements](/\_img/v8-release-66/async-generator.svg)
+![Async generator performance improvements](../_img/v8-release-66/async-generator.svg)
 
 最后[字节码改进](https://chromium-review.googlesource.com/c/v8/v8/+/866734)到“可挂起函数”，如生成器、异步函数和模块，提高了这些函数在解释器中运行时的性能，并减小了它们的编译大小。我们计划在即将发布的版本中进一步提高异步函数和异步生成器的性能，敬请期待。
 
@@ -131,7 +131,7 @@ async function fibonacci(id, n) {
 
 吞吐量性能`Array#reduce`对于多孔双阵列（×[请参阅我们的博客文章，了解什么是多孔和打包数组](/blog/elements-kinds)).这拓宽了以下情况的快速路径：`Array#reduce`适用于多孔和填充的双阵列。
 
-![Array.prototype.reduce performance improvements](/\_img/v8-release-66/array-reduce.svg)
+![Array.prototype.reduce performance improvements](../_img/v8-release-66/array-reduce.svg)
 
 ## 不受信任的代码缓解措施
 

@@ -72,7 +72,7 @@ function specialMax(...args) {
 
 有关 V8 v5.4 和 v5.6 之间的比较，请参阅下表。
 
-![Comparing the ES2015 feature performance of V8 v5.4 and v5.6 with SixSpeed](/\_img/v8-release-56/perf.png)
+![Comparing the ES2015 feature performance of V8 v5.4 and v5.6 with SixSpeed](../_img/v8-release-56/perf.png)
 
 这仅仅是个开始。在即将发布的版本中还有很多内容要跟进！
 

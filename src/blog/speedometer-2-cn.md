@@ -21,15 +21,15 @@ Blink和V8团队欢迎[最近发布的更新的车速表 2.0 基准测试](https
 
 Blink和V8团队已经完成了第一轮改进，这证明了这个基准测试对我们的重要性，并继续我们专注于现实世界性能的旅程。将2017年7月的Chrome 60与最新的Chrome 64进行比较，我们在2016年中期的Macbook Pro（4核，16GB RAM）上的总得分（每分钟运行次数）提高了约21%。
 
-![Comparison of Speedometer 2 scores between Chrome 60 and 64](/\_img/speedometer-2/scores.png)
+![Comparison of Speedometer 2 scores between Chrome 60 and 64](../_img/speedometer-2/scores.png)
 
 让我们放大各个车速表 2.0 行项目。我们通过改进将 React 运行时的性能提高了一倍[`Function.prototype.bind`](https://chromium.googlesource.com/v8/v8/+/808dc8cff3f6530a627ade106cbd814d16a10a18).Vanilla-ES2015、AngularJS、Preact 和 VueJS 改进了 19%–42%，原因是[加快 JSON 解析速度](https://chromium-review.googlesource.com/c/v8/v8/+/700494)以及各种其他性能修复。jQuery-TodoMVC应用程序的运行时通过改进Blink的DOM实现而减少，包括[更轻量级的表单控件](https://chromium.googlesource.com/chromium/src/+/f610be969095d0af8569924e7d7780b5a6a890cd)和[调整到我们的 HTML 解析器](https://chromium.googlesource.com/chromium/src/+/6dd09a38aaae9c15adf5aad966f761f180bf1cef).V8 的内联缓存的额外调整与优化编译器相结合，带来了全面的改进。
 
-![Score improvements for each Speedometer 2 subtest from Chrome 60 to 64](/\_img/speedometer-2/improvements.png)
+![Score improvements for each Speedometer 2 subtest from Chrome 60 to 64](../_img/speedometer-2/improvements.png)
 
 与车速表1.0相比，一个显着的变化是最终分数的计算。以前，所有分数的平均值都倾向于只处理最慢的行项目。例如，在查看每个行项目上花费的绝对时间时，我们看到EmberJS-Debug版本花费的时间大约是最快的基准测试的35倍。因此，提高总体得分，专注于EmberJS-Debug具有最大的潜力。
 
-![](/\_img/speedometer-2/time.png)
+![](../_img/speedometer-2/time.png)
 
 车速表2.0使用几何平均值作为最终得分，有利于对每个框架进行平等投资。让我们考虑一下我们最近从上面改进了16.5%的Preact。仅仅因为它对总时间的微小贡献而放弃16.5%的改进是相当不公平的。
 

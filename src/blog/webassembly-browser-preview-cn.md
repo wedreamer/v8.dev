@@ -23,7 +23,7 @@
 
 您可以在[项目网站](http://webassembly.org/)以及关注我们的[开发人员指南](http://webassembly.org/getting-started/developers-guide/)使用Emscripten测试C\&C++的WebAssembly编译。这[二进制格式](http://webassembly.org/docs/binary-encoding/)和[JS API](http://webassembly.org/docs/js/)文档分别概述了WebAssembly的二进制编码以及在浏览器中实例化WebAssembly模块的机制。下面是一个快速示例，用于显示 wasm 的外观：
 
-![An implementation of the Greatest Common Divisor function in WebAssembly, showing the raw bytes, the text format (WAST), and the C source code.](/\_img/webassembly-browser-preview/gcd.svg)
+![An implementation of the Greatest Common Divisor function in WebAssembly, showing the raw bytes, the text format (WAST), and the C source code.](../_img/webassembly-browser-preview/gcd.svg)
 
 由于WebAssembly仍然在Chrome中的标志后面（<chrome://flags/#enable-webassembly>），目前不建议将其用于生产用途。但是，浏览器预览期间标记了我们主动收集的时间[反馈](http://webassembly.org/community/feedback/)关于规范的设计和实现。鼓励开发人员测试编译和移植应用程序并在浏览器中运行它们。
 

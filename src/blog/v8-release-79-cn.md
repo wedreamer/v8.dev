@@ -27,7 +27,7 @@
 
 这个相对简单的变化将速度计AngularJS分数提高了4%。
 
-![Speedometer AngularJS score improvements](/\_img/v8-release-79/speedometer-angularjs.svg)
+![Speedometer AngularJS score improvements](../_img/v8-release-79/speedometer-angularjs.svg)
 
 ### 在内置中处理 API 获取器
 
@@ -39,7 +39,7 @@ V8 将在内置中执行整个原型演练以加载 getter，然后在它意识�
 
 现在，在 V8 v7.9 中，这些 getter 在内置中处理，即使它们没有安装 IC 处理程序，也不必错过C++运行时，通过利用可以直接调用 API getter 的特殊 API 存根。这导致速度计的Backbone和jQuery基准测试中IC运行时间缩短了12%。
 
-![Speedometer Backbone and jQuery improvements](/\_img/v8-release-79/speedometer.svg)
+![Speedometer Backbone and jQuery improvements](../_img/v8-release-79/speedometer.svg)
 
 ### OSR 缓存
 
@@ -47,7 +47,7 @@ V8 将在内置中执行整个原型演练以加载 getter，然后在它意识�
 
 如果该函数第二次执行，则很可能再次被OSRed。在 V8 v7.9 之前，我们需要再次重新优化该函数，以便对其进行 OSR。但是，从 v7.9 开始，我们添加了 OSR 缓存以保留用于 OSR 替换的优化代码，该代码由用作 OSRed 函数入口点的循环标头键入。这已将某些峰值性能基准测试的性能提高了 5–18%。
 
-![OSR caching improvements](/\_img/v8-release-79/osr-caching.svg)
+![OSR caching improvements](../_img/v8-release-79/osr-caching.svg)
 
 ## WebAssembly
 

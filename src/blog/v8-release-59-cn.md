@@ -22,7 +22,7 @@ V8 v5.9将是第一个默认启用Ignition+TurboFan的版本。通常，此开�
 
 [WebAssembly`TrapIf`支持](https://chromium.googlesource.com/v8/v8/+/98fa962e5f342878109c26fd7190573082ac3abe)显著减少了编译代码所花费的时间（约 30%）。
 
-![](/\_img/v8-release-59/angrybots.png)
+![](../_img/v8-release-59/angrybots.png)
 
 ## V8 接口
 

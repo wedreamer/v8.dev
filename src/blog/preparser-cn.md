@@ -48,7 +48,7 @@ function g() {
 
 首先是接收器（即`this`的值`f`，即`globalThis`因为它是一个草率的函数调用）被推送到堆栈上，然后是被调用的函数`f`.然后参数`1`和`2`被推到堆栈上。此时函数`f`被调用。要执行调用，我们首先保存`g`在堆栈上：“返回指令指针”（`rip`;我们需要返回哪些代码）`f`以及“帧指针”（`fp`;返回时堆栈应是什么样子）。然后我们进入`f`，为局部变量分配空间`c`，以及它可能需要的任何临时空间。这可确保函数使用的任何数据在函数激活超出范围时消失：它只是从堆栈中弹出。
 
-![Stack layout of a call to function f with arguments a, b, and local variable c allocated on the stack.](/\_img/preparser/stack-1.svg)
+![Stack layout of a call to function f with arguments a, b, and local variable c allocated on the stack.](../_img/preparser/stack-1.svg)
 
 此设置的问题在于函数可以引用在外部函数中声明的变量。内部函数的寿命可以超过创建它们的激活时间：
 
@@ -69,7 +69,7 @@ function g() {
 
 在上面的示例中，引用来自`inner`到局部变量`d`声明于`make_f`在以下时间后进行评估`make_f`已返回。为了实现这一点，具有词法闭包的语言的 VM 在称为“上下文”的结构中分配从堆上的内部函数引用的变量。
 
-![Stack layout of a call to make_f with the argument copied to a context allocated on the heap for later use by inner that captures d.](/\_img/preparser/stack-2.svg)
+![Stack layout of a call to make_f with the argument copied to a context allocated on the heap for later use by inner that captures d.](../_img/preparser/stack-2.svg)
 
 这意味着对于函数中声明的每个变量，我们需要知道内部函数是否引用了该变量，以便我们可以决定是在堆栈上还是在堆分配的上下文中分配变量。当我们计算函数文本时，我们分配一个闭包，该闭包既指向函数的代码，也指向当前上下文：包含可能需要访问的变量值的对象。
 
@@ -137,17 +137,17 @@ outer(); // Fully parses and compiles `outer`, but not `inner`.
 
 但是，为了计算惰性编译函数本身是否需要上下文，我们需要再次执行范围解析：我们需要知道嵌套在惰性编译函数中的函数是否引用惰性函数声明的变量。我们可以通过重新准备这些函数来解决这个问题。这正是V8在V8 v6.3 / Chrome 63之前所做的。然而，这在性能方面并不理想，因为它使源代码大小和解析成本之间的关系非线性：我们将准备函数的次数与嵌套的次数一样多。除了动态程序的自然嵌套之外，JavaScript打包者通常将代码包装在”[立即调用的函数表达式](https://en.wikipedia.org/wiki/Immediately_invoked_function_expression)“（IIFEs），使大多数JavaScript程序具有多个嵌套层。
 
-![Each reparse adds at least the cost of parsing the function.](/\_img/preparser/parse-complexity-before.svg)
+![Each reparse adds at least the cost of parsing the function.](../_img/preparser/parse-complexity-before.svg)
 
 为了避免非线性性能开销，即使在准备过程中，我们也会执行全范围分辨率。我们存储了足够的元数据，以便以后可以简单地*跳*内部功能，而不必重新准备它们。一种方法是存储内部函数引用的变量名称。这存储成本很高，并且要求我们仍然需要重复工作：我们已经在准备过程中执行了可变分辨率。
 
 相反，我们序列化了变量作为每个变量的标志密集数组分配的位置。当我们对函数进行惰性解析时，变量将按照与准备器相同的顺序重新创建，我们可以简单地将元数据应用于变量。现在该函数已编译，不再需要变量分配元数据，并且可以进行垃圾回收。由于我们只需要实际包含内部函数的函数的元数据，因此所有函数中的很大一部分甚至不需要此元数据，从而显着降低了内存开销。
 
-![By keeping track of metadata for preparsed functions we can completely skip inner functions.](/\_img/preparser/parse-complexity-after.svg)
+![By keeping track of metadata for preparsed functions we can completely skip inner functions.](../_img/preparser/parse-complexity-after.svg)
 
 跳过内部函数对性能的影响是非线性的，就像重新准备内部函数的开销一样。有些站点将其所有功能提升到顶级范围。由于它们的嵌套级别始终为 0，因此开销始终为 0。但是，许多现代网站实际上确实深嵌套了功能。在这些网站上，当此功能在V8 v6.3 / Chrome 63中推出时，我们看到了显着的改进。主要优点是，现在代码嵌套的深度不再重要：任何函数最多准备一次，完全解析一次\[^1]。
 
-![Main thread and off-the-main-thread parse time, before and after launching the “skipping inner functions” optimization.](/\_img/preparser/skipping-inner-functions.svg)
+![Main thread and off-the-main-thread parse time, before and after launching the “skipping inner functions” optimization.](../_img/preparser/skipping-inner-functions.svg)
 
 \[^1]：出于内存原因，V8[刷新字节码](/blog/v8-release-74#bytecode-flushing)当它被闲置一段时间时。如果以后再次需要该代码，我们将重新解析并再次编译它。由于我们允许变量元数据在编译期间失效，因此在延迟重新编译时会导致内部函数的重新分析。在这一点上，我们为其内部函数重新创建元数据，因此我们不需要再次重新准备其内部函数的内部函数。
 
@@ -168,7 +168,7 @@ outer(); // Fully parses and compiles `outer`, but not `inner`.
 
 在 V8 仍然重新解析内部函数的时候，一些开发人员注意到 JS 解析对启动的影响非常大。套餐[`optimize-js`](https://github.com/nolanlawson/optimize-js)将函数转换为基于静态启发式的 PIFE。在创建软件包时，这对 V8 上的负载性能产生了巨大的影响。我们通过运行由`optimize-js`在 V8 v6.1 上，只查看缩小的脚本。
 
-![Eagerly parsing and compiling PIFEs results in slightly faster cold and warm startup (first and second page load, measuring total parse + compile + execute times). The benefit is much smaller on V8 v7.5 than it used to be on V8 v6.1 though, due to significant improvements to the parser.](/\_img/preparser/eager-parse-compile-pife.svg)
+![Eagerly parsing and compiling PIFEs results in slightly faster cold and warm startup (first and second page load, measuring total parse + compile + execute times). The benefit is much smaller on V8 v7.5 than it used to be on V8 v6.1 though, due to significant improvements to the parser.](../_img/preparser/eager-parse-compile-pife.svg)
 
 尽管如此，现在我们不再重新解析内部函数，并且由于解析器的速度要快得多，因此通过`optimize-js`大大减少。实际上，v7.5 的默认配置已经比在 v6.1 上运行的优化版本快得多。即使在 v7.5 上，对启动期间所需的代码谨慎使用 PIFE 仍然是有意义的：我们避免了 preparse，因为我们很早就知道需要该函数。
 
@@ -176,7 +176,7 @@ outer(); // Fully parses and compiles `outer`, but not `inner`.
 
 但是，仍然有成本，尤其是内存成本，因此急切地编译所有内容并不是一个好主意：
 
-![Eagerly compiling all JavaScript comes at a significant memory cost.](/\_img/preparser/eager-compilation-overhead.svg)
+![Eagerly compiling all JavaScript comes at a significant memory cost.](../_img/preparser/eager-compilation-overhead.svg)
 
 虽然在启动期间所需的函数周围添加括号是一个好主意（例如，基于分析启动），但使用像这样的包`optimize-js`应用简单的静态启发式方法不是一个好主意。例如，它假设在启动期间将调用一个函数，如果它是函数调用的参数。但是，如果这样的函数实现了整个模块，而该模块仅在很久以后才需要，那么您最终会编译太多。过度热切编译对性能不利：没有延迟编译的 V8 会显著减少加载时间。此外，一些好处`optimize-js`来自UglifyJS和其他微型器的问题，这些微缩模型从不是IIFE的PIFE中删除括号，删除了可以应用于例如[通用模块定义](https://github.com/umdjs/umd)-样式模块。这可能是一个微型浏览器应该解决的问题，以便在急切编译PIFE的浏览器上获得最佳性能。
 

@@ -14,7 +14,7 @@
 
 古老的格言“被测量的东西得到改进”在JavaScript虚拟机（VM）开发领域尤其正确。选择正确的指标来指导性能优化是 VM 团队随着时间的推移可以执行的最重要的事情之一。下面的时间轴大致说明了自 V8 初始发布以来 JavaScript 基准测试是如何演变的：
 
-![Evolution of JavaScript benchmarks](/\_img/real-world-performance/evolution.png)
+![Evolution of JavaScript benchmarks](../_img/real-world-performance/evolution.png)
 
 从历史上看，V8和其他JavaScript引擎使用综合基准测试来衡量性能。最初，VM开发人员使用微基准标记，例如[太阳蜘蛛](https://webkit.org/perf/sunspider/sunspider.html)和[海肯](http://krakenbenchmark.mozilla.org/).随着浏览器市场的成熟，第二个基准测试时代开始了，在此期间，他们使用了更大但仍然综合测试套件，例如[辛烷](http://chromium.github.io/octane/)和[捷讯科技](http://browserbench.org/JetStream/).
 
@@ -36,7 +36,7 @@
 
 从这些测量中，我们发现 Octane 性能实际上是我们 25 个测试网站中大多数网站性能的不良代表。您可以在下面的图表中看到：Octane 的色条分布与任何其他工作负载都非常不同，尤其是那些用于现实世界网站的工作负载。运行 Octane 时，V8 的瓶颈通常是 JavaScript 代码的执行。然而，大多数现实世界的网站反而强调V8的解析器和编译器。我们意识到，针对 Octane 进行的优化通常对现实世界的网页缺乏影响，在某些情况下，这些影响也会降低。[优化使现实世界的网站变慢](https://benediktmeurer.de/2016/12/16/the-truth-about-traditional-javascript-benchmarks/#a-closer-look-at-octane).
 
-![Distribution of time running all of Octane, running the line-items of Speedometer, and loading websites from our test suite on Chrome 57](/\_img/real-world-performance/startup-distribution.png)
+![Distribution of time running all of Octane, running the line-items of Speedometer, and loading websites from our test suite on Chrome 57](../_img/real-world-performance/startup-distribution.png)
 
 我们还发现，另一个基准测试实际上是真实网站的更好代理。[速度计](http://browserbench.org/Speedometer/)，WebKit 基准测试包括用 React、Angular、Ember 和其他框架编写的应用程序，演示了与 25 个站点非常相似的运行时配置文件。虽然没有基准测试可以与真实网页的保真度相匹配，但我们相信Speedometer在近似Web上现代JavaScript的真实工作负载方面比Octane做得更好。
 

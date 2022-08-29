@@ -21,7 +21,7 @@
 
 在深入实施之前，我们需要知道我们的立场，以正确评估情况。为了测量我们的记忆力和表现，我们使用一组[网页](https://v8.dev/blog/optimizing-v8-memory)反映了流行的现实世界网站。数据显示，V8贡献了Chrome的60%。[渲染器进程](https://www.chromium.org/developers/design-documents/multi-process-architecture)台式机上的内存消耗，平均为 40%。
 
-![V8 memory consumption percentage in Chrome’s renderer memory](/\_img/pointer-compression/memory-chrome.svg)
+![V8 memory consumption percentage in Chrome’s renderer memory](../_img/pointer-compression/memory-chrome.svg)
 
 指针压缩是 V8 中为减少内存消耗而正在进行的几项工作之一。这个想法非常简单：我们可以存储来自某个“基”地址的32位偏移，而不是存储64位指针。有了这样一个简单的想法，我们可以从V8的这种压缩中获得多少收益？
 
@@ -74,7 +74,7 @@ Smi:        |____int32_value____|000000000000000000<b>0</b>|
 
 简单的压缩方案是在前 4 GB 的地址空间中分配对象。
 
-![Trivial heap layout](/\_img/pointer-compression/heap-layout-0.svg)
+![Trivial heap layout](../_img/pointer-compression/heap-layout-0.svg)
 
 不幸的是，这不是V8的选项，因为Chrome的渲染器进程可能需要在同一渲染器进程中创建多个V8实例，例如对于Web/Service Workers。否则，使用此方案，所有这些 V8 实例都会争用相同的 4 GB 地址空间，因此所有 V8 实例一起施加了 4 GB 的内存限制。
 
@@ -133,7 +133,7 @@ if (compressed_tagged & 1) {
 
 如果不是在4 GB的开头有基数，而是将基数放在*中间*，我们可以将压缩值视为**签署**从基极偏移 32 位。请注意，整个预留不再是 4 GB 对齐的，但基本保留是。
 
-![Heap layout, base aligned to the middle](/\_img/pointer-compression/heap-layout-2.svg)
+![Heap layout, base aligned to the middle](../_img/pointer-compression/heap-layout-2.svg)
 
 在此新布局中，压缩代码保持不变。
 
@@ -173,7 +173,7 @@ int64_t uncompressed_tagged =
 
 此图显示了 Octane 在优化和完善指针压缩实现时在 x64 架构上的得分。在图中，越高越好。红线是现有的全尺寸指针 x64 版本，而绿线是指针压缩版本。
 
-![First round of Octane’s improvements](/\_img/pointer-compression/perf-octane-1.svg)
+![First round of Octane’s improvements](../_img/pointer-compression/perf-octane-1.svg)
 
 在第一个工作实现中，我们有大约35%的回归差距。
 
@@ -273,7 +273,7 @@ TurboFan优化阶段通过在图形上使用模式匹配来工作：一旦子图
 
 ### 进一步改进
 
-![Second round of Octane’s improvements](/\_img/pointer-compression/perf-octane-2.svg)
+![Second round of Octane’s improvements](../_img/pointer-compression/perf-octane-2.svg)
 
 #### 凸块 （5）， +0.5%
 
@@ -356,7 +356,7 @@ int64_t uncompressed_tagged = base + int64_t(compressed_tagged);
 
 剩余的性能差距可以通过针对 64 位构建的两项优化来解释，由于与指针压缩基本不兼容，我们不得不禁用这两个优化。
 
-![Final round of Octane’s improvements](/\_img/pointer-compression/perf-octane-3.svg)
+![Final round of Octane’s improvements](../_img/pointer-compression/perf-octane-3.svg)
 
 #### 32 位 SMI 优化 （7），-1%
 
@@ -388,13 +388,13 @@ const p = new Point(3.1, 5.3);
 
 一般来说，如果我们看一下对象p在内存中的样子，我们会看到这样的东西：
 
-![Object p in memory](/\_img/pointer-compression/heap-point-1.svg)
+![Object p in memory](../_img/pointer-compression/heap-point-1.svg)
 
 您可以在 中阅读有关隐藏类和属性以及元素后备存储区的详细信息[本文](https://v8.dev/blog/fast-properties).
 
 在 64 位体系结构上，双精度值的大小与指针相同。因此，如果我们假设 Point 的字段始终包含数字值，则可以将它们直接存储在对象字段中。
 
-![](/\_img/pointer-compression/heap-point-2.svg)
+![](../_img/pointer-compression/heap-point-2.svg)
 
 如果假设对某个字段无效，请在执行此行后说：
 
@@ -404,7 +404,7 @@ const q = new Point(2, 'ab');
 
 则 y 属性的数字值必须以盒装形式存储。此外，如果在某个地方存在依赖于此假设的推测优化代码，则必须不再使用它，并且必须将其丢弃（取消优化）。这种“字段类型”泛化的原因是尽量减少从同一构造函数创建的对象形状的数量，这反过来又是更稳定的性能所必需的。
 
-![Objects p and q in memory](/\_img/pointer-compression/heap-point-3.svg)
+![Objects p and q in memory](../_img/pointer-compression/heap-point-3.svg)
 
 如果应用，双字段取消装箱具有以下优点：
 
@@ -500,13 +500,13 @@ DescriptorArray Map::instance_descriptors(const Isolate* isolate) const {
 
 在其中，我们观察到指针压缩减少了**V8 堆大小高达 43%**!反过来，它减少了**Chrome 的渲染器进程内存高达 20%**在桌面上。
 
-![Memory savings when browsing in Windows 10](/\_img/pointer-compression/v8-heap-memory.svg)
+![Memory savings when browsing in Windows 10](../_img/pointer-compression/v8-heap-memory.svg)
 
 需要注意的另一件重要事情是，并非每个网站的改进量相同。例如，Facebook上的V8堆内存曾经比纽约时报大，但使用指针压缩实际上是相反的。这种差异可以通过以下事实来解释：某些网站比其他网站具有更多的标记值。
 
 除了这些内存改进之外，我们还看到了实际性能的改进。在真实的网站上，我们利用更少的CPU和垃圾回收器时间！
 
-![Improvements in CPU and garbage collection time](/\_img/pointer-compression/performance-improvements.svg)
+![Improvements in CPU and garbage collection time](../_img/pointer-compression/performance-improvements.svg)
 
 ## 结论
 

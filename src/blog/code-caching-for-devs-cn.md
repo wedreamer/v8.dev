@@ -37,7 +37,7 @@
 
 综上所述：
 
-![Code caching is split into cold, warm, and hot runs, using the in-memory cache on warm runs and the disk cache on hot runs.](/\_img/code-caching-for-devs/overview.svg)
+![Code caching is split into cold, warm, and hot runs, using the in-memory cache on warm runs and the disk cache on hot runs.](../_img/code-caching-for-devs/overview.svg)
 
 根据此描述，我们可以提供最佳提示，以改善您的网站对代码缓存的使用。
 
@@ -53,7 +53,7 @@
 
 这可能是显而易见的，但值得明确说明 - 每当您发布新代码时，该代码尚未缓存。每当浏览器对脚本URL发出HTTP请求时，它都可以包含上次获取该URL的日期，如果服务器知道文件没有更改，它可以发回304未修改响应，这将使我们的代码缓存保持热度。否则，200 OK 响应将更新缓存的资源，并清除代码缓存，将其恢复为冷运行。
 
-![](/\_img/code-caching-for-devs/http-200-vs-304.jpg "Drake prefers HTTP 304 responses to HTTP 200 responses.")
+![](../_img/code-caching-for-devs/http-200-vs-304.jpg "Drake prefers HTTP 304 responses to HTTP 200 responses.")
 
 总是立即推送最新的代码更改是很诱人的，特别是如果你想衡量某个更改的影响，但对于缓存，最好保留代码，或者至少尽可能少地更新它。考虑施加以下限制`≤ x`每周部署次数，其中`x`是可以调整为权衡缓存与过时性的滑块。
 
@@ -83,7 +83,7 @@ if (Math.random() > 0.5) {
 
 当然，“无所事事”的建议，无论是被动的还是主动的，都不是很令人满意。因此，除了“什么都不做”之外，鉴于我们当前的启发式和实现，您还可以做一些事情。但请记住，启发式方法可以改变，此建议可能会改变，并且分析是无可替代的。
 
-![](/\_img/code-caching-for-devs/with-great-power.jpg "Uncle Ben suggests that Peter Parker should be cautious when optimizing his web app’s cache behavior.")
+![](../_img/code-caching-for-devs/with-great-power.jpg "Uncle Ben suggests that Peter Parker should be cautious when optimizing his web app’s cache behavior.")
 
 ### 使用它们从代码中分离出库 { #split }
 
@@ -199,7 +199,7 @@ self.addEventListener('fetch', (event) => {
 
 `chrome://tracing`记录在一段时间内检测的 Chrome 跟踪，其中生成的跟踪可视化效果如下所示：
 
-![The chrome://tracing UI with a recording of a warm cache run](/\_img/code-caching-for-devs/chrome-tracing-visualization.png)
+![The chrome://tracing UI with a recording of a warm cache run](../_img/code-caching-for-devs/chrome-tracing-visualization.png)
 
 跟踪会记录整个浏览器（包括其他选项卡、窗口和扩展程序）的行为，因此，在干净的用户配置文件中完成此操作、禁用扩展程序且未打开其他浏览器选项卡时，跟踪效果最佳：
 
@@ -210,23 +210,23 @@ google-chrome --user-data-dir="$(mktemp -d)" --disable-extensions
 
 收集跟踪时，必须选择要跟踪的类别。在大多数情况下，您只需选择“Web 开发人员”类别集，但您也可以手动选择类别。代码缓存的重要类别是`v8`.
 
-![](/\_img/code-caching-for-devs/chrome-tracing-categories-1.png)
+![](../_img/code-caching-for-devs/chrome-tracing-categories-1.png)
 
-![](/\_img/code-caching-for-devs/chrome-tracing-categories-2.png)
+![](../_img/code-caching-for-devs/chrome-tracing-categories-2.png)
 
 记录跟踪后`v8`类别，查找`v8.compile`跟踪中的切片。（或者，您可以输入`v8.compile`在跟踪 UI 的搜索框中。它们列出了正在编译的文件，以及有关编译的一些元数据。
 
 在脚本的冷运行时，没有关于代码缓存的信息 — 这意味着该脚本不参与生成或使用缓存数据。
 
-![](/\_img/code-caching-for-devs/chrome-tracing-cold-run.png)
+![](../_img/code-caching-for-devs/chrome-tracing-cold-run.png)
 
 在温暖的跑步中，有两个`v8.compile`每个脚本的条目：一个用于实际编译（如上所述），一个（执行后）用于生成缓存。您可以识别后者，因为它具有`cacheProduceOptions`和`producedCacheSize`元数据字段。
 
-![](/\_img/code-caching-for-devs/chrome-tracing-warm-run.png)
+![](../_img/code-caching-for-devs/chrome-tracing-warm-run.png)
 
 在热运行中，您会看到一个`v8.compile`用于使用缓存的条目，带有元数据字段`cacheConsumeOptions`和`consumedCacheSize`.所有大小均以字节表示。
 
-![](/\_img/code-caching-for-devs/chrome-tracing-hot-run.png)
+![](../_img/code-caching-for-devs/chrome-tracing-hot-run.png)
 
 ## 结论
 

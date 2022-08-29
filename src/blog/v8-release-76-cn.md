@@ -21,7 +21,7 @@
 
 在现代JavaScript应用程序中，JSON通常用作传达结构化数据的格式。通过加速JSON解析，我们可以减少这种通信的延迟。在 V8 v7.6 中，我们对 JSON 解析器进行了全面修改，使其在扫描和解析 JSON 时速度更快。这样可以更快地解析热门网页提供的数据× 2.7.7。
 
-![Chart showing improved performance of JSON.parse on a variety of websites](/\_img/v8-release-76/json-parsing.svg)
+![Chart showing improved performance of JSON.parse on a variety of websites](../_img/v8-release-76/json-parsing.svg)
 
 在 V8 v7.5 之前，JSON 解析器是一个递归解析器，它将使用相对于传入 JSON 数据的嵌套深度的本机堆栈空间。这意味着我们可能会用完非常深嵌套的JSON数据的堆栈。V8 v7.6 切换到一个迭代解析器，该解析器管理自己的堆栈，该堆栈仅受可用内存的限制。
 
@@ -39,7 +39,7 @@
 
 下图显示了改进。
 
-![Chart showing performance boost on a variety of array operations](/\_img/v8-release-76/frozen-sealed-elements.svg)
+![Chart showing performance boost on a variety of array operations](../_img/v8-release-76/frozen-sealed-elements.svg)
 
 [请参阅“V8 中的快速冷冻和密封元件”设计文档](https://bit.ly/fast-frozen-sealed-elements-in-v8)了解更多详情。
 

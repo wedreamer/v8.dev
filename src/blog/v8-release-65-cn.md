@@ -31,7 +31,7 @@ const module = await WebAssembly.compileStreaming(fetch('foo.wasm'));
 
 对于下图，我们测量了下载和编译具有67 MB和大约190，000个函数的WebAssembly模块所需的时间。我们以25 Mbit /s，50 Mbit / s和100 Mbit / s的下载速度进行测量。
 
-![](/\_img/v8-release-65/wasm-streaming-compilation.svg)
+![](../_img/v8-release-65/wasm-streaming-compilation.svg)
 
 当下载时间长于WebAssembly模块的编译时间时，例如，在上图中，25 Mbit/s和50 Mbit/s，则`WebAssembly.compileStreaming()`在下载最后一个字节后几乎立即完成编译。
 
@@ -56,7 +56,7 @@ const module = await WebAssembly.compileStreaming(fetch('foo.wasm'));
 
 下图显示了与 V8 v6.4 相比，我们的内联内置功能（细分为整数数组、双数组和带孔的双数组）的改进增量。时间以毫秒为单位。
 
-![Performance improvements since V8 v6.4](/\_img/v8-release-65/performance-improvements.svg)
+![Performance improvements since V8 v6.4](../_img/v8-release-65/performance-improvements.svg)
 
 ## V8 接口
 

@@ -25,7 +25,7 @@ V8 附带了一个广泛的 JavaScript （JS） 库[内置函数](/docs/builtin-
 
 2016年，V8[开始](/blog/speeding-up-regular-expressions)试验在 中实现的内置[CodeStubAssembler](/blog/csa)（CSA）。事实证明，这既方便（独立于平台，可读），又可以生成高效的代码，因此CSA内置功能变得无处不在。由于各种原因，CSA 内置组件倾向于生成更大的代码，随着越来越多的内置组件移植到 CSA，V8 内置组件的大小大约增加了两倍。到 2017 年年中，他们的每隔离开销显著增加，我们开始考虑系统化解决方案。
 
-![V8 snapshot size (including builtins) from 2015 until 2017](/\_img/embedded-builtins/snapshot-size.png)
+![V8 snapshot size (including builtins) from 2015 until 2017](../_img/embedded-builtins/snapshot-size.png)
 
 2017 年底，我们实施了[惰性内置（和字节码处理程序）反序列化](/blog/lazy-deserialization)作为第一步。我们的初步分析表明，大多数网站使用的不到所有内置的一半。使用惰性反序列化时，内置组件将按需加载，未使用的内置组件永远不会加载到隔离中。Chrome 64 中提供了惰性反序列化，有望节省内存。但是：内置内存开销在隔离的数量上仍然是线性的。
 
@@ -55,7 +55,7 @@ V8 有一个移动垃圾回收器，目标对象的位置可能会随时间而�
     // Call instruction located at [pc + <offset>].
     call <offset>
 
-![A pc-relative call](/\_img/embedded-builtins/pc-relative-call.png)
+![A pc-relative call](../_img/embedded-builtins/pc-relative-call.png)
 
 代码对象本身位于托管堆上，并且是可移动的。当它们被移动时，GC 会更新所有相关呼叫站点的偏移量。
 
@@ -63,7 +63,7 @@ V8 有一个移动垃圾回收器，目标对象的位置可能会随时间而�
 
 为了解决这两个问题，我们通过一个专用的、所谓的根寄存器引入了一个间接寻址，该寄存器将指针指向当前隔离中的已知位置。
 
-![Isolate layout](/\_img/embedded-builtins/isolate-layout.png)
+![Isolate layout](../_img/embedded-builtins/isolate-layout.png)
 
 V8的`Isolate`class 包含根表，该表本身包含指向托管堆上根对象的指针。根寄存器永久保存根表的地址。
 
@@ -90,11 +90,11 @@ V8的`Isolate`class 包含根表，该表本身包含指向托管堆上根对象
 
 可执行二进制文件分为几个部分。例如，ELF 二进制文件包含`.data`（初始化数据），`.ro_data`（初始化的只读数据），以及`.bss`（未初始化的数据）部分，而本机可执行代码则放置在`.text`.我们的目标是将内置代码打包到`.text`部分以及本机代码。
 
-![Sections of an executable binary file](/\_img/embedded-builtins/binary-format.png)
+![Sections of an executable binary file](../_img/embedded-builtins/binary-format.png)
 
 这是通过引入一个新的构建步骤来完成的，该步骤使用V8的内部编译器管道为所有内置生成本机代码并将其内容输出到`embedded.cc`.然后，此文件将编译到最终的 V8 二进制文件中。
 
-![The (simplified) V8 embedded build process](/\_img/embedded-builtins/build-process.png)
+![The (simplified) V8 embedded build process](../_img/embedded-builtins/build-process.png)
 
 这`embedded.cc`文件本身包含元数据和生成的内置机器代码作为一系列`.byte`指示C++编译器（在我们的例子中为 clang 或 gcc）将指定的字节序列直接放入输出对象文件（以及后来的可执行文件）中的指令。
 
@@ -113,11 +113,11 @@ V8的`Isolate`class 包含根表，该表本身包含指向托管堆上根对象
 
 但是V8的`Code`对象不仅由指令流组成，而且还具有各种（有时依赖于隔离的）元数据。正常磨合`Code`对象将元数据和指令流打包到可变大小`Code`位于托管堆上的对象。
 
-![On-heap Code object layout](/\_img/embedded-builtins/code-on-heap.png)
+![On-heap Code object layout](../_img/embedded-builtins/code-on-heap.png)
 
 正如我们所看到的，嵌入式内置的本机指令流位于托管堆之外，嵌入到`.text`部分。为了保留它们的元数据，每个嵌入式内置器还具有一个小的关联`Code`托管堆上的对象，称为*离堆蹦床*.元数据按标准存储在蹦床上`Code`对象，而内联指令流仅包含一个短序列，该序列加载嵌入式指令的地址并跳转到那里。
 
-![Off-heap Code object layout](/\_img/embedded-builtins/code-off-heap.png)
+![Off-heap Code object layout](../_img/embedded-builtins/code-off-heap.png)
 
 蹦床允许V8处理所有`Code`对象均匀。对于大多数目的，给定的`Code`对象是指托管堆上的标准代码或嵌入式内置代码。
 
@@ -129,7 +129,7 @@ V8的`Isolate`class 包含根表，该表本身包含指向托管堆上根对象
 
 因此，我们的工作集中在1.减少间接联系，以及 2.改进内置调用序列。为了解决前者，我们更改了隔离对象布局，将大多数对象加载转换为单个根相对负载。全局内置常量池仍然存在，但仅包含不常访问的对象。
 
-![Optimized Isolate layout](/\_img/embedded-builtins/isolate-layout-optimized.png)
+![Optimized Isolate layout](../_img/embedded-builtins/isolate-layout-optimized.png)
 
 呼叫序列在两个方面得到了显着改进。内置到内置的调用被转换为单个 pc 相对调用指令。对于运行时生成的 JIT 代码，这是不可能的，因为 pc 相对偏移量可能超过最大 32 位值。在那里，我们将堆外蹦床内联到所有呼叫站点，将呼叫顺序从6个减少到只有2个指令。
 
@@ -139,7 +139,7 @@ V8的`Isolate`class 包含根表，该表本身包含指向托管堆上根对象
 
 我们评估了嵌入式内置对x64的影响，而不是最受欢迎的前10000个网站，并与懒惰和急切的反序列化（如上所述）进行了比较。
 
-![V8 heap size reduction vs. eager and lazy deserialization](/\_img/embedded-builtins/results.png)
+![V8 heap size reduction vs. eager and lazy deserialization](../_img/embedded-builtins/results.png)
 
 以前，Chrome 会附带一个内存映射快照，我们会在每个隔离器上反序列化该快照，而现在，快照被嵌入的内置组件所取代，这些内置内容仍采用内存映射，但不需要反序列化。内置成本曾经是`c*(1 + n)`哪里`n`是隔离株的数量，并且`c`所有内置的内存成本，而现在它只是`c * 1`（在实践中，对于堆外蹦床，还保留了少量的每隔离架空）。
 

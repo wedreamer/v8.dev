@@ -44,13 +44,13 @@
 
 优化过程中的常见工作流涉及选择在时间轴视图中占据大部分堆的实例类型，如图 1 所示。选择实例类型后，该工具将显示此类型使用情况的分布。在此示例中，我们选择了 V8 的内部 FixedArray 数据结构，这是一个非类型化的类似矢量的容器，在 VM 的各种位置无处不在。图 2 显示了一个典型的 FixedArray 分布，我们可以看到大部分内存可以归因于特定的 FixedArray 使用场景。在这种情况下，FixedArrays被用作稀疏JavaScript数组（我们称之为DICTIONARY_ELEMENTS）的后备存储。有了这些信息，就可以回溯到实际代码，并验证此分布是否确实是预期行为，或者是否存在优化机会。我们使用该工具来识别许多内部类型的低效率。
 
-![Figure 1: Timeline view of managed heap and off-heap memory](/\_img/optimizing-v8-memory/timeline-view.png)
+![Figure 1: Timeline view of managed heap and off-heap memory](../_img/optimizing-v8-memory/timeline-view.png)
 
-![Figure 2: Distribution of instance type](/\_img/optimizing-v8-memory/distribution.png)
+![Figure 2: Distribution of instance type](../_img/optimizing-v8-memory/distribution.png)
 
 图 3 显示了C++堆内存消耗，主要由区域内存（V8 使用的临时内存区域用于短时间;下面将更详细地讨论）组成。 由于 V8 解析器和编译器最广泛地使用区域内存，因此峰值对应于解析和编译事件。行为良好的执行仅由峰值组成，表示一旦不再需要内存，就会释放内存。相反，平台（即较长的时间段和较高的内存消耗）表示存在优化空间。
 
-![Figure 3: Zone memory](/\_img/optimizing-v8-memory/zone-memory.png)
+![Figure 3: Zone memory](../_img/optimizing-v8-memory/zone-memory.png)
 
 早期采用者也可以尝试集成到[Chrome 的跟踪基础架构](https://www.chromium.org/developers/how-tos/trace-event-profiling-tool).因此，您需要运行最新的Chrome Canary`--track-gc-object-stats`和[捕获跟踪](https://www.chromium.org/developers/how-tos/trace-event-profiling-tool/recording-tracing-runs#TOC-Capture-a-trace-on-Chrome-desktop)包括类别`v8.gc_stats`.然后，数据将显示在`V8.GC_Object_Stats`事件。
 
@@ -66,7 +66,7 @@
 
 图 4 描述了自 Chrome 53 以来在低内存设备上的一些改进。最值得注意的是，移动版《纽约时报》基准测试的平均 V8 堆内存消耗减少了约 66%。总体而言，我们观察到这组基准测试的平均 V8 堆大小减少了 50%。
 
-![Figure 4: V8 heap memory reduction since Chrome 53 on low-memory devices](/\_img/optimizing-v8-memory/heap-memory-reduction.png)
+![Figure 4: V8 heap memory reduction since Chrome 53 on low-memory devices](../_img/optimizing-v8-memory/heap-memory-reduction.png)
 
 最近引入的另一项优化不仅减少了低内存设备上的内存，而且减少了更强大的移动和台式机。将 V8 堆页面大小从 1 MB 减少到 512 kB 可在活动对象不多时减少内存占用，并将整体内存碎片降低多达 2×。它还允许 V8 执行更多的压缩工作，因为较小的工作块允许内存压缩线程并行完成更多的工作。
 
@@ -80,7 +80,7 @@ Chrome 55的主要改进之一是减少了后台解析期间的内存消耗。�
 
 图5显示了自Chrome 54以来峰值区域内存的改进，与测量的网站相比，平均减少了约40%。
 
-![Figure 5: V8 peak zone memory reduction since Chrome 54 on desktop](/\_img/optimizing-v8-memory/peak-zone-memory-reduction.png)
+![Figure 5: V8 peak zone memory reduction since Chrome 54 on desktop](../_img/optimizing-v8-memory/peak-zone-memory-reduction.png)
 
 在接下来的几个月里，我们将继续努力减少 V8 的内存占用量。我们为解析器计划了更多的区域内存优化，我们计划专注于512 MB – 1 GB内存范围的设备。
 

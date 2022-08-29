@@ -46,7 +46,7 @@ UAF通常很难在较大的代码库中发现，其中对象的所有权在各�
 
 通过隔离和堆扫描确保时间安全背后的主要思想是避免重用内存，直到证明不再有（悬空）指针引用它。为了避免更改C++用户代码或其语义，内存分配器提供`new`和`delete`被拦截。
 
-![Figure 1: quarantine basics](/\_img/retrofitting-temporal-memory-safety-on-c++/basics.svg)
+![Figure 1: quarantine basics](../_img/retrofitting-temporal-memory-safety-on-c++/basics.svg)
 
 调用时`delete`，则内存实际上被置于隔离区中，其中无法重复使用以进行后续操作`new`应用程序的调用。在某些时候，会触发堆扫描，扫描整个堆，就像垃圾回收器一样，以查找对隔离内存块的引用。没有来自常规应用程序内存的传入引用的块将传输回分配器，在那里它们可以在后续分配中重用。
 
@@ -67,7 +67,7 @@ UAF通常很难在较大的代码库中发现，其中对象的所有权在各�
 
 我们已经尝试了不同版本的\*Scan。但是，为了尽可能减少性能开销，我们评估了使用单独线程扫描堆并避免在 上急切地清除隔离内存的配置。`delete`而是在运行\*Scan时清除隔离的内存。我们选择使用`new`并且为了在第一个实现中简化，不要区分分配站点和类型。
 
-![Figure 2: Scanning in separate thread](/\_img/retrofitting-temporal-memory-safety-on-c++/separate-thread.svg)
+![Figure 2: Scanning in separate thread](../_img/retrofitting-temporal-memory-safety-on-c++/separate-thread.svg)
 
 请注意，建议的 \*Scan 版本不完整。具体而言，恶意执行组件可能通过将悬空指针从未扫描的内存区域移动到已扫描的内存区域来利用扫描线程的争用条件。修复此争用条件需要跟踪写入已扫描内存块的操作，例如，通过使用内存保护机制来拦截这些访问，或者停止安全点中的所有应用程序线程完全改变对象图。无论哪种方式，解决此问题都会以性能为代价，并表现出有趣的性能和安全性权衡。请注意，这种攻击不是通用的，并不适用于所有UAF。诸如引言中描述的问题不会容易受到此类攻击，因为悬挂的指针不会被复制。
 
@@ -99,7 +99,7 @@ MTE 不提供针对免费后使用的确定性保护。由于标记位数是有�
 
 下图描述了这种机制。指向`foo`最初具有`0x0E`这允许它再次递增以进行分配`bar`.调用时`delete`为`bar`标签溢出，内存实际上被放入\*Scan的隔离区。
 
-![Figure 3: MTE](/\_img/retrofitting-temporal-memory-safety-on-c++/mte.svg)
+![Figure 3: MTE](../_img/retrofitting-temporal-memory-safety-on-c++/mte.svg)
 
 我们掌握了一些支持MTE的实际硬件，并在渲染器过程中重新进行了实验。结果是有希望的，因为Speedometer上的回归是在噪声范围内，我们在Chrome的真实世界浏览故事中仅将内存占用量减少了约1%。
 
@@ -112,7 +112,7 @@ D. 启用了 MTE，并带有 \*扫描;
 
 （我们也知道，同步和异步 MTE 也会影响确定性和性能。为了这个实验，我们继续使用异步模式。
 
-![Figure 4: MTE regression](/\_img/retrofitting-temporal-memory-safety-on-c++/mte-regression.svg)
+![Figure 4: MTE regression](../_img/retrofitting-temporal-memory-safety-on-c++/mte-regression.svg)
 
 结果表明，MTE和内存归零带来了一些成本，在Speedometer2上约为2%。请注意，PartitionAlloc 和硬件都尚未针对这些方案进行优化。该实验还表明，在MTE之上添加\*Scan是没有可衡量成本的。
 

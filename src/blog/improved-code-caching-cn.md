@@ -29,7 +29,7 @@ Chrome 会将序列化生成的代码存储到磁盘缓存中，并使用脚本�
 
 嵌入者可以请求 V8 序列化它在顶级编译新 JavaScript 源文件期间生成的代码。V8 在编译脚本后返回序列化代码。当 Chrome 再次请求相同的脚本时，V8 会从缓存中获取序列化代码并将其反序列化。V8 完全避免了重新编译缓存中已有的函数。这些场景如下图所示：
 
-![](/\_img/improved-code-caching/warm-hot-run-1.png)
+![](../_img/improved-code-caching/warm-hot-run-1.png)
 
 V8 只编译在顶级编译期间预期会立即执行的函数 （IIFE），并将其他函数标记为惰性编译。这有助于通过避免编译不需要的函数来帮助缩短页面加载时间，但这意味着序列化的数据仅包含预先编译的函数的代码。
 
@@ -39,14 +39,14 @@ V8 只编译在顶级编译期间预期会立即执行的函数 （IIFE），并
 
 V8 公开了一个新的 API，`ScriptCompiler::CreateCodeCache`，以请求独立于编译请求的代码缓存。不推荐使用请求代码缓存和编译请求，在 V8 v6.6 及更高版本中不起作用。从版本 66 开始，Chrome 会在顶级执行后使用此 API 请求代码缓存。下图显示了请求代码缓存的新方案。代码缓存是在顶级执行后请求的，因此包含稍后在执行脚本期间编译的函数的代码。在后续运行中（在下图中显示为热运行），它避免了在顶级执行期间编译函数。
 
-![](/\_img/improved-code-caching/warm-hot-run-2.png)
+![](../_img/improved-code-caching/warm-hot-run-2.png)
 
 ## 结果
 
 此功能的性能是使用我们的内部来衡量的[实际基准测试](https://cs.chromium.org/chromium/src/tools/perf/page_sets/v8\_top\_25.py?q=v8.top\&sq=package:chromium\&l=1).下图显示了与早期缓存方案相比，解析和编译时间的缩短情况。大多数页面上的解析和编译时间都减少了约20-40%。
 
-![](/\_img/improved-code-caching/parse.png)
+![](../_img/improved-code-caching/parse.png)
 
-![](/\_img/improved-code-caching/compile.png)
+![](../_img/improved-code-caching/compile.png)
 
 来自野外的数据显示，类似的结果，在桌面和移动设备上编译JavaScript代码所花费的时间减少了20-40%。在 Android 上，这种优化还意味着顶级页面加载指标减少了 1-2%，例如网页变得交互式所需的时间。我们还监控了Chrome的内存和磁盘使用情况，没有看到任何明显的回归。

@@ -38,7 +38,7 @@ V8团队最近开始根据25个现实世界的网站页面加载（包括Faceboo
 
 V8在[蓝鸟 ES2015`Promise`基准测试套件](https://github.com/petkaantonov/bluebird/tree/master/benchmark)在 V8 v5.3 中改进了 20–40%，因体系结构和基准测试而异。
 
-![V8’s Promise performance over time on a Nexus 5x](/\_img/v8-release-53/promise.png)
+![V8’s Promise performance over time on a Nexus 5x](../_img/v8-release-53/promise.png)
 
 ## V8 接口
 

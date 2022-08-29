@@ -30,7 +30,7 @@ for (let i = 0; i <  N; i++) {
 console.timeEnd();
 ```
 
-![Performance impact of removing the arguments adaptor frame, as measured through a micro-benchmark.](/\_img/v8-release-89/perf.svg)
+![Performance impact of removing the arguments adaptor frame, as measured through a micro-benchmark.](../_img/v8-release-89/perf.svg)
 
 该图显示，在 上运行时不再有开销[无 JIT 模式](https://v8.dev/blog/jitless)（点火）性能提高11.2%。使用时[涡轮风扇](https://v8.dev/docs/turbofan)，我们获得了高达40%的加速。
 
@@ -40,7 +40,7 @@ console.timeEnd();
 
 该项目的全部意义在于删除参数适配器框架，该框架在堆栈中访问其参数时为被调用方提供了一致的接口。为此，我们需要反转堆栈中的参数，并在包含实际参数计数的被调用方帧中添加一个新槽。下图显示了更改前后典型帧的示例。
 
-![A typical JavaScript stack frame before and after removing the arguments adaptor frame.](/\_img/adaptor-frame/frame-diff.svg)
+![A typical JavaScript stack frame before and after removing the arguments adaptor frame.](../_img/adaptor-frame/frame-diff.svg)
 
 ## 使 JavaScript 调用速度更快
 
@@ -55,7 +55,7 @@ function add42(x) {
 add42(3);
 ```
 
-![Flow of execution inside V8 during a function call.](/\_img/adaptor-frame/flow.svg)
+![Flow of execution inside V8 during a function call.](../_img/adaptor-frame/flow.svg)
 
 ## 点火
 
@@ -79,7 +79,7 @@ Ignition中有许多字节码调用处理程序。您可以看到它们的列表
 
 内置功能实质上将返回地址弹出到临时寄存器，推送所有参数（包括接收器）并推回返回地址。在这一点上，我们不知道被调用方是否是可调用对象，也不知道被调用方期望多少个参数，即其形式参数计数。
 
-![State of the frame after the execution of InterpreterPushArgsThenCall built-in.](/\_img/adaptor-frame/normal-push.svg)
+![State of the frame after the execution of InterpreterPushArgsThenCall built-in.](../_img/adaptor-frame/normal-push.svg)
 
 最终执行尾部调用到内置[`Call`](https://source.chromium.org/chromium/chromium/src/+/master:v8/src/builtins/x64/builtins-x64.cc;drc=8665f09771c6b8220d6020fe9b1ad60a4b0b6591;l=2256).在那里，它检查目标是否是正确的函数，构造函数或任何可调用的对象。它还读取`shared function info`结构以获取其正式参数计数。
 
@@ -91,7 +91,7 @@ Ignition中有许多字节码调用处理程序。您可以看到它们的列表
 
 在不过多地介绍接下来会发生什么的情况下，我们可以看到被叫方执行期间解释器帧的快照。
 
-![The InterpreterFrame for the call add42(3).](/\_img/adaptor-frame/normal-frame.svg)
+![The InterpreterFrame for the call add42(3).](../_img/adaptor-frame/normal-frame.svg)
 
 我们看到帧中有固定数量的槽：返回地址、上一帧指针、上下文、我们正在执行的当前函数对象、此函数的字节码数组以及我们正在执行的当前字节码的偏移量。最后，我们有一个专用于此函数的寄存器列表（您可以将它们视为函数局部变量）。这`add42`函数实际上没有任何寄存器，但调用方具有具有3个寄存器的类似帧。
 
@@ -124,7 +124,7 @@ add42(1, 2, 3);
 
 如果我们遵循与以前相同的步骤，我们将首先调用内置`InterpreterPushArgsThenCall`.它会将参数推送到堆栈，如下所示：
 
-![State of the frames after the execution of InterpreterPushArgsThenCall built-in.](/\_img/adaptor-frame/adaptor-push.svg)
+![State of the frames after the execution of InterpreterPushArgsThenCall built-in.](../_img/adaptor-frame/adaptor-push.svg)
 
 继续与之前相同的过程，我们检查被调用方是否是函数对象，获取其参数计数并将接收方修补到全局代理。最终我们到达`InvokeFunctionCode`.
 
@@ -132,7 +132,7 @@ add42(1, 2, 3);
 
 在这个内置的框架中，我们构建了一个额外的框架，臭名昭着的论点适配器框架。我不会解释内置内部发生了什么，而是在内置调用被调用方之前向您呈现框架的状态。`Code`.请注意，这是一个适当的`x64 call`（不是`jmp`），并且在被调用方执行后，我们将返回到`ArgumentsAdaptorTrampoline`.这与`InvokeFunctionCode`那个尾声。
 
-![Stack frames with arguments adaptation.](/\_img/adaptor-frame/adaptor-frames.svg)
+![Stack frames with arguments adaptation.](../_img/adaptor-frame/adaptor-frames.svg)
 
 您可以看到，我们创建了另一个帧，该帧复制了所有必要的参数，以便将参数的参数精确地放在被调用方帧的顶部。它创建被调用方函数的接口，以便后者不需要知道参数的数量。被调用方将始终能够以与以前相同的计算方式访问其参数，即`[ai] = 2 + parameter_count - i - 1`.
 
@@ -158,7 +158,7 @@ function add42(x) {
 
 从函数返回很简单，尽管速度很慢。记住什么`LeaveInterpreterFrame`吗？它基本上弹出被调用方帧和参数计数号的参数。因此，当我们返回到参数适配器存根时，堆栈如下所示：
 
-![State of the frames after the execution of the callee add42.](/\_img/adaptor-frame/adaptor-frames-cleanup.svg)
+![State of the frames after the execution of the callee add42.](../_img/adaptor-frame/adaptor-frames-cleanup.svg)
 
 我们只需要弹出参数的数量，弹出适配器框架，根据实际参数计数弹出所有参数并返回调用方执行。
 
@@ -201,13 +201,13 @@ TL;DR：参数适配器机器不仅复杂，而且成本高昂。
 
 如果我们在 V8 v8.9 中运行我们的示例，我们将在以下位置看到以下堆栈：`InterpreterArgsThenPush`（请注意，参数现在被反转）：
 
-![State of the frames after the execution of InterpreterPushArgsThenCall built-in.](/\_img/adaptor-frame/no-adaptor-push.svg)
+![State of the frames after the execution of InterpreterPushArgsThenCall built-in.](../_img/adaptor-frame/no-adaptor-push.svg)
 
 所有执行都遵循类似的路径，直到我们到达 InvokeFunctionCode。在这里，我们在应用不足的情况下调整参数，根据需要推送尽可能多的未定义对象。请注意，在过度应用的情况下，我们不会更改任何内容。最后，我们将参数的数量传递给被调用方`Code`通过寄存器。在以下情况下`x64`，我们使用寄存器`rax`.
 
 如果被叫方尚未优化，我们会达到`InterpreterEntryTrampoline`，这将生成以下堆栈帧。
 
-![Stack frames without arguments adaptors.](/\_img/adaptor-frame/no-adaptor-frames.svg)
+![Stack frames without arguments adaptors.](../_img/adaptor-frame/no-adaptor-frames.svg)
 
 被调用方帧有一个额外的槽，其中包含可用于构造 rest 参数或参数对象的参数数，以及在返回给调用方之前清理堆栈中的参数。
 

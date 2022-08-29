@@ -228,7 +228,7 @@ Timsort最初由Tim Peters于2002年为Python开发，可以最好地描述为�
 *   `|C| > |B| + |A|`
 *   `|B| > |A|`
 
-![Runs stack before and after merging A with B](/\_img/array-sort/runs-stack.svg)
+![Runs stack before and after merging A with B](../_img/array-sort/runs-stack.svg)
 
 该图显示了以下情况：`|A| > |B|`所以`B`与两个游程中较小的一个合并。
 
@@ -280,7 +280,7 @@ builtin Load<ElementsAccessor : type>(
 
 ### 排序状态
 
-![](/\_img/array-sort/sort-state.svg)
+![](../_img/array-sort/sort-state.svg)
 
 上图显示了“排序状态”。这是一个`FixedArray`在排序时跟踪所有需要的东西。每次`Array#sort`被调用，则分配这样的排序状态。条目 4 到 7 是上面讨论的包含快速路径的函数指针集。
 
@@ -302,17 +302,17 @@ builtin Load<ElementsAccessor : type>(
 
 请记住，在这些情况下，JIT编译器可以做很多工作，因为排序几乎是我们所做的一切。这也允许优化编译器在JavaScript版本中内联比较函数，而在Torque情况下，我们有从内置到JavaScript的调用开销。尽管如此，我们在几乎所有情况下的表现都更好。
 
-![](/\_img/array-sort/micro-bench-basic.svg)
+![](../_img/array-sort/micro-bench-basic.svg)
 
 下一个图表显示了在处理已完全排序的数组或具有已单向排序的子序列时 Timsort 的影响。该图表使用快速排序作为基线，并显示Timsort的加速（在“DownDown”的情况下，最多17×数组由两个反向排序的序列组成）。可以看出，除了随机数据的情况外，Timsort在所有其他情况下的表现都更好，即使我们正在排序`PACKED_SMI_ELEMENTS`，其中Quicksort在上面的微板架标记中优于Timsort。
 
-![](/\_img/array-sort/micro-bench-presorted.svg)
+![](../_img/array-sort/micro-bench-presorted.svg)
 
 ### 网络工具基准测试
 
 这[网络工具基准测试](https://github.com/v8/web-tooling-benchmark)是Web开发人员通常使用的工具的工作负载的集合，例如Babel和TypeScript。该图表使用 JavaScript Quicksort 作为基线，并将 Timsort 的加速与它进行比较。在几乎所有的基准测试中，除了chai之外，我们都保持相同的性能。
 
-![](/\_img/array-sort/web-tooling-benchmark.svg)
+![](../_img/array-sort/web-tooling-benchmark.svg)
 
 柴基准的支出*第三个*在单个比较函数（字符串距离计算）中的时间。基准测试是chai本身的测试套件。由于数据的原因，在这种情况下，Timsort需要更多的比较，这对整体运行时有更大的影响，因为如此大一部分时间都花在该特定的比较函数中。
 

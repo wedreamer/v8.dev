@@ -93,7 +93,7 @@ function(arr) {
 
 我们实现了这个简单的想法[断续器](/blog/csa)为*快*数组，即具有六种最常见之一的数组[元素种类](/blog/elements-kinds).优化适用于[常见的真实场景](/blog/real-world-performance)其中，传播发生在数组文本的开头，例如`[...foo]`.如下图所示，这种新的快速路径在扩展长度为100，000的数组时，性能提高了大约3×，使其比手写快约25%`clone`圈。
 
-![Performance improvement of spreading a fast array](/\_img/spread-elements/spread-fast-array.png)
+![Performance improvement of spreading a fast array](../_img/spread-elements/spread-fast-array.png)
 
 ：：：备注
 **注意：**虽然此处未显示，但当展开元素后跟其他组件（例如`[...arr, 1, 2, 3]`），但当它们前面有其他人时（例如`[1, 2, 3, ...arr]`).
@@ -137,11 +137,11 @@ const result = [...arr];
 
 请注意，虽然`slice`包含在此图中，与之比较是不公平的，因为`slice`对于多孔数组具有不同的语义：它保留了所有孔，因此要做的工作量要少得多。
 
-![Performance improvement of spreading a holey array of integers (HOLEY_SMI_ELEMENTS)](/\_img/spread-elements/spread-holey-smi-array.png)
+![Performance improvement of spreading a holey array of integers (HOLEY_SMI_ELEMENTS)](../_img/spread-elements/spread-holey-smi-array.png)
 
 填充孔`undefined`我们的快速路径必须执行并不像听起来那么简单：它可能需要将整个数组转换为不同的元素类型。下图测量了这种情况。设置与上面相同，只是这次600个数组元素是未装箱的双精度，并且数组具有`HOLEY_DOUBLE_ELEMENTS`元素种类。由于此元素类型不能保存标记的值，例如`undefined`，传播涉及昂贵的元素类型转换，这就是为什么分数为`[...a]`远低于上图。尽管如此，它仍然比快得多。`clone(a)`.
 
-![Performance improvement of spreading a holey array of doubles (HOLEY_DOUBLE_ELEMENTS)](/\_img/spread-elements/spread-holey-double-array.png)
+![Performance improvement of spreading a holey array of doubles (HOLEY_DOUBLE_ELEMENTS)](../_img/spread-elements/spread-holey-double-array.png)
 
 ## 扩展字符串、集合和映射
 
@@ -153,15 +153,15 @@ const result = [...arr];
 
 用于扩展字符串 （`[...string]`），我们测量了大约5×改进，如下图中的紫色和绿色线条所示。请注意，这甚至比 TurboFan 优化的循环（TurboFan 理解字符串迭代并可以为其生成优化的代码）更快，由蓝色和粉红色行表示。在每种情况下都有两个图的原因是微基准测试在两种不同的字符串表示形式（单字节字符串和双字节字符串）上运行。
 
-![Performance improvement of spreading a string](/\_img/spread-elements/spread-string.png)
+![Performance improvement of spreading a string](../_img/spread-elements/spread-string.png)
 
-![Performance improvement of spreading a set with 100,000 integers (magenta, about 18×), shown here in comparison with a for-of loop (red)](/\_img/spread-elements/spread-set.png)
+![Performance improvement of spreading a set with 100,000 integers (magenta, about 18×), shown here in comparison with a for-of loop (red)](../_img/spread-elements/spread-set.png)
 
 ## 提高`Array.from`性能
 
 幸运的是，我们的扩散元素的快速路径可以重复用于`Array.from`在以下情况下`Array.from`使用可迭代对象调用，而不使用映射函数，例如，`Array.from([1, 2, 3])`.重用是可能的，因为在这种情况下，行为`Array.from`与传播完全相同。它带来了巨大的性能改进，如下所示，对于具有100个双精度的数组。
 
-![Performance improvement of Array.from(array) where array contains 100 doubles](/\_img/spread-elements/array-from-array-of-doubles.png)
+![Performance improvement of Array.from(array) where array contains 100 doubles](../_img/spread-elements/array-from-array-of-doubles.png)
 
 ## 结论
 

@@ -101,11 +101,11 @@ class GCed : public GarbageCollected<GCed> {
 
 从简单开始，Oilpan最初实现了停止世界扫描，它作为垃圾收集终结暂停的一部分运行，中断了主线程上应用程序的执行：
 
-![Stop-the-world sweeping](/\_img/high-performance-cpp-gc/stop-the-world-sweeping.svg)
+![Stop-the-world sweeping](../_img/high-performance-cpp-gc/stop-the-world-sweeping.svg)
 
 对于具有软实时约束的应用程序，处理垃圾回收时的决定因素是延迟。停止世界扫描可能会导致长时间的暂停，从而导致用户可见的应用程序延迟。作为减少延迟的下一步，扫描是增量的：
 
-![Incremental sweeping](/\_img/high-performance-cpp-gc/incremental-sweeping.svg)
+![Incremental sweeping](../_img/high-performance-cpp-gc/incremental-sweeping.svg)
 
 使用增量方法，扫描被拆分并委派给其他主线程任务。在最好的情况下，这些任务完全在[空闲时间](https://research.google/pubs/pub45361/)，避免干扰任何常规应用程序执行。在内部，清扫器根据页面的概念将工作划分为更小的单元。页面可以处于两种有趣的状态：*待扫除*清扫器仍需要处理的页面，以及*已经横扫*扫地机已处理的页面。分配仅考虑已清扫的页，并将从维护可用内存块列表的空闲列表中重新填充本地分配缓冲区 （LAG）。为了从空闲列表中获取内存，应用程序将首先尝试在已扫描的页面中查找内存，然后尝试通过将扫描算法内联到分配中来帮助处理待扫描的页面，并且仅在没有内存的情况下从操作系统请求新内存。
 
@@ -116,7 +116,7 @@ Oilpan 多年来一直使用增量扫描，但随着应用程序及其生成的�
 
 这两个不变量都确保对象及其内存不应有竞争者。不幸的是，C++严重依赖于作为终结器实现的析构函数。Oilpan强制终结器在主线程上运行，以帮助开发人员并排除应用程序代码本身中的数据竞争。为了解决这个问题，Oilpan 将对象定格推迟到主线程。更具体地说，每当并发扫波器遇到具有终结器（析构函数）的对象时，它会将其推送到将在单独的终结阶段中处理的终结队列中，该阶段始终在运行应用程序的主线程上执行。具有并发扫描的整体工作流如下所示：
 
-![Concurrent sweeping using background tasks](/\_img/high-performance-cpp-gc/concurrent-sweeping.svg)
+![Concurrent sweeping using background tasks](../_img/high-performance-cpp-gc/concurrent-sweeping.svg)
 
 由于终结器可能需要访问对象的所有有效负载，因此将相应的内存添加到可用列表会延迟到执行终结器之后。如果未执行终结器，则在后台线程上运行的清除程序会立即将回收的内存添加到可用列表中。
 
@@ -124,7 +124,7 @@ Oilpan 多年来一直使用增量扫描，但随着应用程序及其生成的�
 
 背景扫描已在Chrome M78中发布。我们[现实世界的基准框架](https://v8.dev/blog/real-world-performance)显示主线程清扫时间缩短了 25%-50%（平均为 42%）。请参阅下面的一组选定的订单项。
 
-![Main thread sweeping time in milliseconds](/\_img/high-performance-cpp-gc/results.svg)
+![Main thread sweeping time in milliseconds](../_img/high-performance-cpp-gc/results.svg)
 
 在主线程上花费的剩余时间用于执行终结器。目前正在进行一项工作，以减少 Blink 中大量实例化对象类型的终结器。令人兴奋的部分是，所有这些优化都是在应用程序代码中完成的，因为在没有终结器的情况下，扫描将自动调整。
 

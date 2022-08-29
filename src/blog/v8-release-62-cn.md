@@ -18,19 +18,19 @@
 
 随着ES2015的到来，`Object#toString`通过新的[`Symbol.toStringTag`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol/toStringTag)符号，这也使`Object#toString`重量更重，加速更具挑战性。在此版本中，我们移植了最初在[SpiderMonkey JavaScript 引擎](https://bugzilla.mozilla.org/show_bug.cgi?id=1369042#c0)到 V8，加快吞吐量`Object#toString`按系数**6，5×**.
 
-![](/\_img/v8-release-62/perf.svg)
+![](../_img/v8-release-62/perf.svg)
 
 它还会影响Speedometer浏览器基准测试，特别是AngularJS子测试，我们测量了3%的稳定改进。阅读[详细的博客文章](https://ponyfoo.com/articles/investigating-performance-object-prototype-to-string-es2015)以获取更多信息。
 
-![](/\_img/v8-release-62/speedometer.svg)
+![](../_img/v8-release-62/speedometer.svg)
 
 我们还显著提高了[ES2015 代理](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy)，通过以下方式加快调用代理对象的速度`someProxy(params)`或`new SomeOtherProxy(params)`最多**5×**:
 
-![](/\_img/v8-release-62/proxy-call-construct.svg)
+![](../_img/v8-release-62/proxy-call-construct.svg)
 
 同样，通过以下方式访问代理对象上的属性的性能`someProxy.property`改进为几乎**6，5×**:
 
-![](/\_img/v8-release-62/proxy-property.svg)
+![](../_img/v8-release-62/proxy-property.svg)
 
 这是正在进行的实习的一部分。请继续关注更详细的博客文章和最终结果。
 
@@ -38,7 +38,7 @@
 
 内部哈希表的哈希码查找速度大大加快，从而提高了`Map`,`Set`,`WeakMap`和`WeakSet`.即将发表的博客文章将详细解释此优化。
 
-![](/\_img/v8-release-62/hashcode-lookups.png)
+![](../_img/v8-release-62/hashcode-lookups.png)
 
 垃圾回收器现在使用[平行清道夫](https://bugs.chromium.org/p/chromium/issues/detail?id=738865)用于收集堆的所谓年轻一代。
 

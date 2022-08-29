@@ -85,7 +85,7 @@ LittleEndian.prototype.getUint32 = function(byteOffset) {
 
 `TypedArray`s 已经在 V8 中进行了大量优化，因此它们代表了我们想要匹配的性能目标。
 
-![Original DataView performance](/\_img/dataview/dataview-original.svg)
+![Original DataView performance](../_img/dataview/dataview-original.svg)
 
 我们的基准测试表明，原生`DataView`格特性能与**4 次**慢于`Uint8Array`基于-的包装器，用于大端和小端读取。
 
@@ -123,7 +123,7 @@ macro LoadDataViewUint32(buffer: JSArrayBuffer, offset: intptr,
 
 移动`DataView`扭矩的方法已经显示了一个**3×改进**在性能上，但并不完全匹配`Uint8Array`-基于包装器性能。
 
-![Torque DataView performance](/\_img/dataview/dataview-torque.svg)
+![Torque DataView performance](../_img/dataview/dataview-torque.svg)
 
 ## 针对涡轮风扇进行优化
 
@@ -135,7 +135,7 @@ TurboFan的工作原理是将传入的JavaScript代码转换为内部图形表�
 
 但是，TurboFan允许我们检查是否`JSCall`node 实际上是对已知函数的调用，例如其中一个内置函数，并将此节点内联到 IR 中。这意味着复杂的`JSCall`在编译时被表示函数的子图替换。这使得TurboFan能够在后续的传递中优化函数的内部，作为更广泛上下文的一部分，而不是单独进行，最重要的是摆脱代价高昂的函数调用。
 
-![Initial TurboFan DataView performance](/\_img/dataview/dataview-turbofan-initial.svg)
+![Initial TurboFan DataView performance](../_img/dataview/dataview-turbofan-initial.svg)
 
 实施 TurboFan 内联最终使我们能够匹配甚至超越我们的性能`Uint8Array`包装器，并且是**8 次**与前者一样快，C++实施。
 
@@ -149,7 +149,7 @@ TurboFan的工作原理是将传入的JavaScript代码转换为内部图形表�
 
 与最初的 TurboFan 实现相比，这增加了一倍多`DataView`基准测试分数。`DataView`s 现在的速度是`Uint8Array`包装，以及周围**速度快 16 倍**作为我们的原件`DataView`实现！
 
-![Final TurboFan DataView performance](/\_img/dataview/dataview-turbofan-final.svg)
+![Final TurboFan DataView performance](../_img/dataview/dataview-turbofan-final.svg)
 
 ## 冲击
 
@@ -159,6 +159,6 @@ TurboFan的工作原理是将传入的JavaScript代码转换为内部图形表�
 
 我们比较了`DataView`s 反对`TypedArray`s.我们发现我们的新`DataView`实现提供的性能几乎与`TypedArray`s 在访问以本机字节序（英特尔处理器上的小端）对齐的数据时，弥合大部分性能差距并使`DataView`是 V8 中的实用选择。
 
-![DataView vs. TypedArray peak performance](/\_img/dataview/dataview-vs-typedarray.svg)
+![DataView vs. TypedArray peak performance](../_img/dataview/dataview-vs-typedarray.svg)
 
 我们希望您现在能够开始使用`DataView`s，而不是依赖`TypedArray`垫片。请将您的反馈发送给我们`DataView`使用！您可以联系我们[通过我们的错误跟踪器](https://crbug.com/v8/new)，通过邮件发送至<v8-users@googlegroups.com>或通过[推特上的@v8js](https://twitter.com/v8js).

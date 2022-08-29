@@ -31,7 +31,7 @@ V8 的 RegExp 实现建立在[Irregexp](https://blog.chromium.org/2009/02/irrege
 
 结果非常积极。我们的得分[大量的正则表达式工作负载](https://github.com/chromium/octane/blob/master/regexp.js)提高了 15%，超过了重新获得我们最近与子类相关的性能损失。微基准标记（图1）显示了全面的改进，从7%到[`RegExp.prototype.exec`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/exec)，高达 102% 用于[`RegExp.prototype[@@split]`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/@@split).
 
-![Figure 1: RegExp speedup broken down by function](/\_img/speeding-up-regular-expressions/perf.png)
+![Figure 1: RegExp speedup broken down by function](../_img/speeding-up-regular-expressions/perf.png)
 
 那么，作为 JavaScript 开发人员，您如何确保您的正则表达式速度快呢？如果您对挂接到 RegExp 内部组件不感兴趣，请确保既不修改 RegExp 实例，也不修改其原型以获得最佳性能：
 

@@ -45,7 +45,7 @@
 
 因此，我们开始研究*精简模式*的 V8，它通过大大减少这些可选对象的分配来权衡 JavaScript 的执行速度与改进的内存节省。
 
-![](/\_img/v8-lite/v8-lite.png){ .no-darkening }
+![](../_img/v8-lite/v8-lite.png){ .no-darkening }
 
 一些*精简模式*可以通过配置现有的V8设置进行更改，例如，禁用V8的TurboFan优化编译器。但是，其他人需要对V8进行更复杂的更改。
 
@@ -61,7 +61,7 @@
 
 这种方法的另一个复杂之处在于，反馈向量形成一棵树，内部函数的反馈向量在其外部函数的反馈向量中作为条目保存。这是必要的，以便新创建的函数闭包接收与为同一函数创建的所有其他闭包相同的反馈向量数组。对于反馈向量的延迟分配，我们不能使用反馈向量形成此树，因为不能保证外部函数在内部函数这样做时已经分配了其反馈向量。为了解决这个问题，我们创建了一个新的`ClosureFeedbackCellArray`来维护此树，然后换出函数的`ClosureFeedbackCellArray`与一个完整的`FeedbackVector`当它变热时。
 
-![Feedback vector trees before and after lazy feedback allocation.](/\_img/v8-lite/lazy-feedback.svg)
+![Feedback vector trees before and after lazy feedback allocation.](../_img/v8-lite/lazy-feedback.svg)
 
 我们的实验室实验和现场遥测显示，桌面上的惰性反馈没有性能回归，在移动平台上，由于垃圾回收的减少，我们实际上看到了低端设备的性能提高。因此，我们在 V8 的所有版本中都启用了惰性反馈分配，包括*精简模式*与我们最初的无反馈分配方法相比，内存中的轻微回归被现实世界性能的改进所弥补。
 
@@ -85,7 +85,7 @@
 
 除了刷新字节码之外，我们还刷新了与这些刷新函数关联的反馈向量。但是，我们无法在与字节码相同的GC周期内刷新反馈向量，因为它们不由同一对象保留 - 字节码由独立于本机上下文的字节保持`SharedFunctionInfo`，而反馈向量由原生上下文相关`JSFunction`.因此，我们在随后的GC循环中刷新反馈向量。
 
-![The object layout for an aged function after two GC cycles.](/\_img/v8-lite/bytecode-flushing.svg)
+![The object layout for an aged function after two GC cycles.](../_img/v8-lite/bytecode-flushing.svg)
 
 ## 其他优化
 
@@ -99,14 +99,14 @@
 
 在过去的七个 V8 版本中，我们已经发布了上述优化。通常他们首先降落*精简模式*，然后后来被引入到 V8 的默认配置。
 
-![Average V8 heap size for a set of typical web pages on an AndroidGo device.](/\_img/v8-lite/savings-by-release.svg)
+![Average V8 heap size for a set of typical web pages on an AndroidGo device.](../_img/v8-lite/savings-by-release.svg)
 
-![Per-page breakdown of memory savings of V8 v7.8 (Chrome 78) compared to v7.1 (Chrome 71).](/\_img/v8-lite/breakdown-by-page.svg)
+![Per-page breakdown of memory savings of V8 v7.8 (Chrome 78) compared to v7.1 (Chrome 71).](../_img/v8-lite/breakdown-by-page.svg)
 
 在这段时间里，我们在一系列典型网站上将 V8 堆大小平均减少了 18%，相当于低端 AndroidGo 移动设备的平均减少了 1.5 MB。这是可能的，而不会对JavaScript性能产生任何重大影响，无论是在基准测试上还是在现实世界的网页交互中测量。
 
 *精简模式*通过禁用函数优化，可以进一步节省内存，但会降低 JavaScript 执行吞吐量。平均*精简模式*节省 22% 的内存，部分页面的内存减少高达 32%。这相当于 AndroidGo 设备上的 V8 堆大小减少了 1.8 MB。
 
-![Breakdown of memory savings of V8 v7.8 (Chrome 78) compared to v7.1 (Chrome 71).](/\_img/v8-lite/breakdown-by-optimization.svg)
+![Breakdown of memory savings of V8 v7.8 (Chrome 78) compared to v7.1 (Chrome 71).](../_img/v8-lite/breakdown-by-optimization.svg)
 
 当按每个单独优化的影响进行拆分时，很明显，不同的页面从每个优化中获得不同比例的收益。展望未来，我们将继续确定潜在的优化，这些优化可以进一步减少V8的内存使用量，同时在JavaScript执行中仍然保持极快的速度。

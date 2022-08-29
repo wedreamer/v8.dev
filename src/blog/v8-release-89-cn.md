@@ -35,7 +35,7 @@ JavaScript允许调用参数数与预期参数数不同的函数，即可以传�
 
 直到最近，V8才有一个特殊的机制来处理参数大小不匹配：参数适配器框架。不幸的是，参数适应是以性能为代价的，并且在现代前端和中间件框架中通常需要。事实证明，通过巧妙的设计（例如反转堆栈中参数的顺序），我们可以删除这个额外的帧，简化V8代码库，并几乎完全消除开销。
 
-![Performance impact of removing the arguments adaptor frame, as measured through a micro-benchmark.](/\_img/v8-release-89/perf.svg)
+![Performance impact of removing the arguments adaptor frame, as measured through a micro-benchmark.](../_img/v8-release-89/perf.svg)
 
 该图显示，在 上运行时不再有开销[无 JIT 模式](https://v8.dev/blog/jitless)（点火）性能提高11.2%。使用 TurboFan 时，我们的加速速度提高了 40%。与无不匹配情况相比，开销是由于[函数尾声](https://source.chromium.org/chromium/chromium/src/+/master:v8/src/compiler/backend/x64/code-generator-x64.cc;l=4905;drc=5056f555010448570f7722708aafa4e55e1ad052).有关更多详细信息，请参阅[设计文档](https://docs.google.com/document/d/15SQV4xOhD3K0omGJKM-Nn8QEaskH7Ir1VYJb9\_5SjuM/edit).
 

@@ -16,9 +16,9 @@
 
 许多流行的网站严重依赖for-in，并从其优化中受益。例如，在2016年初，Facebook在启动期间花费了大约7%的JavaScript时间来实施`for`-`in`本身。在维基百科上，这个数字甚至更高，约为8%。通过提高某些慢速机箱的性能，Chrome 51 显著提高了以下两个网站的性能：
 
-![](/\_img/fast-for-in/wikipedia.png)
+![](../_img/fast-for-in/wikipedia.png)
 
-![](/\_img/fast-for-in/facebook.png)
+![](../_img/fast-for-in/facebook.png)
 
 维基百科和Facebook都将其总脚本时间提高了4%，原因如下：`for`-`in`改进。请注意，在同一时期，V8的其余部分也变得更快，这使得脚本编写的总体改进超过4%。
 
@@ -120,7 +120,7 @@ V8 通过隐藏类或所谓的 Map 来跟踪对象的结构。具有相同映射
 
 让我们暂时假设我们的 JavaScript 对象已达到其最终形状，并且不会添加或删除更多属性。在这种情况下，我们可以使用描述符数组作为键的源。如果只有可枚举属性，则此方法有效。为了避免每次 V8 使用可通过 Map 的描述符数组访问的单独 EnumCache 时过滤掉不可枚举属性的开销。
 
-![](/\_img/fast-for-in/enum-cache.png)
+![](../_img/fast-for-in/enum-cache.png)
 
 假设 V8 期望慢速字典对象频繁更改（即通过添加和删除属性），对于具有字典属性的慢速对象，没有描述符数组。因此，V8 不为慢速属性提供 EnumCache。类似的假设也适用于索引属性，因此它们也被排除在EnumCache之外。
 
@@ -283,7 +283,7 @@ for (var k in o) console.log(k);
 
 这`KeyAccumulator`由一个快速部分组成，该部分仅支持一组有限的操作，但能够非常有效地完成它们。慢速累加器支持所有复杂情况，如ES6代理。
 
-![](/\_img/fast-for-in/keyaccumulator.png)
+![](../_img/fast-for-in/keyaccumulator.png)
 
 为了正确过滤掉阴影属性，我们必须维护一个单独的不可枚举属性列表，到目前为止我们已经看到。出于性能原因，我们只有在确定对象的原型链上存在可枚举属性后才会执行此操作。
 
@@ -331,17 +331,17 @@ var elements = {
 
 下图比较了运行`for`-`in`在没有我们的优化编译器帮助的情况下，在紧密循环中循环一百万次。
 
-![](/\_img/fast-for-in/keyaccumulator-benchmark.png)
+![](../_img/fast-for-in/keyaccumulator-benchmark.png)
 
 正如我们在引言中概述的那样，这些改进在维基百科和Facebook上变得非常明显。
 
-![](/\_img/fast-for-in/wikipedia.png)
+![](../_img/fast-for-in/wikipedia.png)
 
-![](/\_img/fast-for-in/facebook.png)
+![](../_img/fast-for-in/facebook.png)
 
 除了Chrome 51中可用的初始改进之外，第二次性能调整还产生了另一个重大改进。下图显示了我们在 Facebook 页面上启动期间在脚本编写过程中花费的总时间的跟踪数据。围绕 V8 修订版 37937 的选定范围相当于额外提高了 4% 的性能！
 
-![](/\_img/fast-for-in/fastkeyaccumulator.png)
+![](../_img/fast-for-in/fastkeyaccumulator.png)
 
 强调改进的重要性`for`-`in`我们可以依靠我们在2016年构建的工具中的数据，该工具允许我们在一组网站上提取V8测量值。下表显示了在 V8 C++ Chrome 49 的入口点（运行时函数和内置）中花费的相对时间，这些时间大约是[25个具有代表性的现实世界网站](/blog/real-world-performance).
 

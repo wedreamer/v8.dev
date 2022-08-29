@@ -27,7 +27,7 @@
 
 通过对Liftoff内部的优化，我们显着提高了WebAssembly编译速度，而不会降低所生成代码的质量。对于大多数工作负载，编译时间缩短了 15–25%。
 
-![Liftoff compile time on the Epic ZenGarden demo](/\_img/v8-release-73/liftoff-epic.svg)
+![Liftoff compile time on the Epic ZenGarden demo](../_img/v8-release-73/liftoff-epic.svg)
 
 ## JavaScript 语言特性
 

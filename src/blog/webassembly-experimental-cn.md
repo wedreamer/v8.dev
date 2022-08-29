@@ -18,7 +18,7 @@
 
 WebAssembly项目网站有一个[演示](https://webassembly.github.io/demo/)展示运行时在 3D 游戏中的使用情况。在支持WebAssembly的浏览器中，演示页面将加载并实例化使用WebGL和其他Web平台API来呈现交互式游戏的wamm模块。在其他浏览器中，演示页面回退到同一游戏的 asm.js 版本。
 
-![WebAssembly demo](/\_img/webassembly-experimental/tanks.jpg)
+![WebAssembly demo](../_img/webassembly-experimental/tanks.jpg)
 
 在引擎盖下，V8 中的 WebAssembly 实现旨在重用大部分现有的 JavaScript 虚拟机基础架构，特别是[涡轮风扇编译器](/blog/turbofan-jit).专用的 WebAssembly 解码器通过在一次传递中检查类型、局部变量索引、函数引用、返回值和控制流结构来验证模块。解码器生成一个TurboFan图，该图由各种优化过程处理，最后由同一后端转换为机器代码，该后端生成用于优化JavaScript和asm.js的机器代码。在接下来的几个月中，该团队将专注于通过编译器调优、并行性和编译策略改进来缩短 V8 实现的启动时间。
 

@@ -19,9 +19,9 @@
 
 从下图中可以看出，由于运行时调用，超级属性访问曾经比正常属性访问慢一个数量级。现在我们离平起平坐了更近的路。
 
-![Compare super property access to regular property access, optimized](/\_img/fast-super/super-opt.svg)
+![Compare super property access to regular property access, optimized](../_img/fast-super/super-opt.svg)
 
-![Compare super property access to regular property access, unoptimized](/\_img/fast-super/super-no-opt.svg)
+![Compare super property access to regular property access, unoptimized](../_img/fast-super/super-no-opt.svg)
 
 超级属性访问很难进行基准测试，因为它必须发生在函数内部。我们无法对单个属性访问进行基准测试，而只能对更大的工作块进行基准测试。因此，函数调用开销包含在度量中。上图有点低估了超级属性访问和正常属性访问之间的差异，但它们足够准确，可以证明新旧超级属性访问之间的差异。
 
@@ -46,11 +46,11 @@ b.m();
 
 现在`A`是超类的`B`和`b.m()`返回`100`如您所料。
 
-![Class inheritance diagram](/\_img/fast-super/inheritance-1.svg)
+![Class inheritance diagram](../_img/fast-super/inheritance-1.svg)
 
 现实情况[JavaScript 的原型继承](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Inheritance_and_the_prototype_chain)更复杂：
 
-![Prototypal inheritance diagram](/\_img/fast-super/inheritance-2.svg)
+![Prototypal inheritance diagram](../_img/fast-super/inheritance-2.svg)
 
 我们需要仔细区分`__proto__`和`prototype`属性 - 它们的含义不是一样的！为了使它更加混乱，对象`b.__proto__`通常被称为”`b`的原型”。
 

@@ -104,7 +104,7 @@ V8 之所以有这种区分，是因为与多孔阵列上的操作相比，可�
 
 V8 将此标签转换系统实现为[格子](https://en.wikipedia.org/wiki/Lattice\_%28order%29).下面是一个简化的可视化，仅包含最常见的元素类型：
 
-![](/\_img/elements-kinds/lattice.svg)
+![](../_img/elements-kinds/lattice.svg)
 
 只有通过晶格向下过渡才有可能。将单个浮点数添加到 Smis 数组后，即使以后用 Smi 覆盖浮点数，它也会被标记为 DOUBLE。同样，一旦在数组中创建了一个孔，它就会永远标记为有孔，即使你以后填充它。
 

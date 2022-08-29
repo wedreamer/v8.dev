@@ -24,7 +24,7 @@ Chrome 41 包括一个[眨眼渲染引擎的任务计划程序](https://blog.chr
 
 例如，当 Chrome 在网页上显示动画时。动画将以60 FPS的速度更新屏幕，为Chrome提供大约16.6毫秒的时间来执行更新。因此，Chrome 将在显示前一帧后立即开始处理当前帧，并为此新帧执行输入、动画和帧渲染任务。如果Chrome在不到16.6毫秒的时间内完成了所有这些工作，那么在需要开始渲染下一帧之前，它在剩余时间内没有其他事情可做。Chrome的调度程序使V8能够利用这一点*空闲时间段*通过调度特殊*空闲任务*当Chrome处于空闲状态时。
 
-![Figure 1: Frame rendering with idle tasks](/\_img/free-garbage-collection/frame-rendering.png)
+![Figure 1: Frame rendering with idle tasks](../_img/free-garbage-collection/frame-rendering.png)
 
 空闲任务是特殊的低优先级任务，当计划程序确定它处于空闲状态时运行。空闲任务被赋予一个截止时间，这是调度程序对它预计保持空闲时间的估计。在图 1 的动画示例中，这将是开始绘制下一帧的时间。在其他情况下（例如，当屏幕上没有发生任何活动时），这可能是计划运行下一个待处理任务的时间，上限为50毫秒，以确保Chrome对意外的用户输入保持响应。空闲任务使用截止时间来估计它可以执行多少工作，而不会导致输入响应卡顿或延迟。
 
@@ -63,7 +63,7 @@ V8 使用[代际垃圾回收器](http://www.memorymanagement.org/glossary/g.html
 
 图 2 显示了在空闲时间安排的垃圾回收的百分比。与Nexus 6相比，工作站更快的硬件导致更多的整体空闲时间，从而可以在此空闲时间安排更大比例的垃圾收集（43%，而Nexus 6上为31%），从而使我们的垃圾回收率提高了约7%[卡顿指标](https://www.chromium.org/developers/design-documents/rendering-benchmarks).
 
-![Figure 2: The percentage of garbage collection that occurs during idle time](/\_img/free-garbage-collection/idle-time-gc.png)
+![Figure 2: The percentage of garbage collection that occurs during idle time](../_img/free-garbage-collection/idle-time-gc.png)
 
 除了提高页面呈现的平滑度外，这些空闲期间还提供了在页面完全空闲时执行更主动的垃圾回收的机会。Chrome 45 最近的改进利用了这一点，大大减少了空闲前台标签所消耗的内存量。图 3 显示了与 Chrome 43 中的同一页面相比，Gmail 的 JavaScript 堆在空闲时的内存使用量如何减少约 45%。
 

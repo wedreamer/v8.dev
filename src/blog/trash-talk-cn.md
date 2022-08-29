@@ -39,7 +39,7 @@
 
 主要 GC 从整个堆中收集垃圾。
 
-![Major GC happens in three phases: marking, sweeping and compacting.](/\_img/trash-talk/01.svg)
+![Major GC happens in three phases: marking, sweeping and compacting.](../_img/trash-talk/01.svg)
 
 ### 标记
 
@@ -61,7 +61,7 @@
 
 V8 中的堆被拆分为不同的区域，称为[代](/blog/orinoco-parallel-scavenger).有年轻一代（进一步分为“托儿所”和“中级”子代）和老一代。首先将对象分配到托儿所。如果他们在下一个GC中幸存下来，他们仍然留在年轻一代，但被认为是“中间人”。如果他们在另一个GC中幸存下来，他们就会被转移到老一代。
 
-![The V8 heap is split into generations. Objects are moved through generations when they survive a GC.](/\_img/trash-talk/02.svg)
+![The V8 heap is split into generations. Objects are moved through generations when they survive a GC.](../_img/trash-talk/02.svg)
 
 在垃圾回收中，有一个重要的术语：“代际假说”。这基本上表明大多数物体在年轻时就死了。换句话说，从GC的角度来看，大多数对象都被分配了，然后几乎立即变得无法访问。这不仅适用于 V8 或 JavaScript，也适用于大多数动态语言。
 
@@ -77,13 +77,13 @@ V8 中有两个垃圾回收器。这[**主要 GC（标记紧凑）**](#major-gc)
 
 撤离步骤将所有幸存的对象移动到连续的内存块（在页面中）。这具有完成消除碎片的优点 - 死物体留下的间隙。然后，我们围绕两个空间切换，即To-Space变为From-Space，反之亦然。GC 完成后，新的分配将发生在 From-Space 中的下一个空闲地址。
 
-![The scavenger evacuates live objects to a fresh page.](/\_img/trash-talk/03.svg)
+![The scavenger evacuates live objects to a fresh page.](../_img/trash-talk/03.svg)
 
 仅凭这一战略，我们很快就耗尽了年轻一代的空间。在第二个GC中幸存下来的物体被疏散到老一代，而不是太空。
 
 清理的最后一步是更新引用已移动的原始对象的指针。每个复制的对象都会留下一个转发地址，用于更新原始指针以指向新位置。
 
-![The scavenger evacuates ‘intermediate’ objects to the old generation, and ‘nursery’ objects to a fresh page.](/\_img/trash-talk/04.svg)
+![The scavenger evacuates ‘intermediate’ objects to the old generation, and ‘nursery’ objects to a fresh page.](../_img/trash-talk/04.svg)
 
 在拾荒过程中，我们实际上执行这三个步骤-标记，疏散和指针更新-都是交错的，而不是在不同的阶段。
 
@@ -102,19 +102,19 @@ Orinoco是GC项目的代号，利用最新和最伟大的并行，增量和并�
 
 并行是主线程和辅助线程同时执行大致相等工作量的地方。这仍然是一种“停止世界”的方法，但现在总暂停时间除以参与的线程数（加上一些同步开销）。这是三种技术中最简单的一种。由于没有运行 JavaScript，因此 JavaScript 堆已暂停，因此每个帮助程序线程只需要确保它同步对其他帮助程序可能也想要访问的任何对象的访问。
 
-![The main thread and helper threads work on the same task at the same time.](/\_img/trash-talk/05.svg)
+![The main thread and helper threads work on the same task at the same time.](../_img/trash-talk/05.svg)
 
 ### 增量
 
 增量是主线程间歇性地执行少量工作的地方。我们不会在增量暂停中执行整个 GC，而只是 GC 所需总工时的一小部分。这更加困难，因为 JavaScript 在每个增量工作段之间执行，这意味着堆的状态已更改，这可能会使以前增量完成的工作无效。从图中可以看出，这并没有减少在主线程上花费的时间（实际上，它通常会略微增加主线程的时间），它只是随着时间的推移而分散。这仍然是解决我们原始问题之一的好技术：主线程延迟。通过允许JavaScript间歇性运行，同时继续垃圾回收任务，应用程序仍然可以响应用户输入并在动画上取得进展。
 
-![Small chunks of the GC task are interleaved into the main thread execution.](/\_img/trash-talk/06.svg)
+![Small chunks of the GC task are interleaved into the main thread execution.](../_img/trash-talk/06.svg)
 
 ### 并发的
 
 并发是指主线程不断执行 JavaScript，而帮助线程完全在后台执行 GC 工作。这是三种技术中最困难的：JavaScript堆上的任何内容都可以随时更改，从而使我们以前所做的工作无效。最重要的是，现在有读/写比赛需要担心，因为帮助线程和主线程同时读取或修改相同的对象。这里的优点是主线程完全可以自由地执行JavaScript - 尽管由于与帮助线程的一些同步而存在少量开销。
 
-![GC tasks happen entirely in the background. The main thread is free to run JavaScript.](/\_img/trash-talk/07.svg)
+![GC tasks happen entirely in the background. The main thread is free to run JavaScript.](../_img/trash-talk/07.svg)
 
 ## V8 中的 GC 状态 { #state }
 
@@ -122,13 +122,13 @@ Orinoco是GC项目的代号，利用最新和最伟大的并行，增量和并�
 
 如今，V8 在年轻一代 GC 期间使用并行清理在辅助线程之间分配工作。每个线程都会接收许多指针，这些指针紧随其后，急切地将任何活动对象疏散到To-Space中。在尝试疏散对象时，清理任务必须通过原子读/写/比较和交换操作进行同步;另一个清理任务可能通过不同的路径找到了相同的对象，并尝试移动它。无论哪个帮助程序成功移动了对象，然后返回并更新指针。它留下了一个转发指针，以便到达该对象的其他工作线程可以在找到其他指针时更新它们。为了快速无同步地分配幸存的对象，清理任务使用线程本地分配缓冲区。
 
-![Parallel scavenging distributes scavenging work across multiple helper threads and the main thread.](/\_img/trash-talk/08.svg)
+![Parallel scavenging distributes scavenging work across multiple helper threads and the main thread.](../_img/trash-talk/08.svg)
 
 ### 主要 GC { #major-gc-state }
 
 V8 中的主要 GC 从并发标记开始。当堆接近动态计算的限制时，将启动并发标记任务。每个帮助程序都有许多要遵循的指针，并且它们标记找到的每个对象，因为它们遵循已发现对象中的所有引用。并发标记完全在后台进行，而 JavaScript 在主线程上执行。[写入障碍](https://dl.acm.org/citation.cfm?id=2025255)用于在帮助程序同时标记时跟踪 JavaScript 创建的对象之间的新引用。
 
-![The major GC uses concurrent marking and sweeping, and parallel compaction and pointer updating.](/\_img/trash-talk/09.svg)
+![The major GC uses concurrent marking and sweeping, and parallel compaction and pointer updating.](../_img/trash-talk/09.svg)
 
 当并发标记完成，或者我们达到动态分配限制时，主线程执行快速标记完成步骤。主线程暂停在此阶段开始。这表示主要 GC 的总暂停时间。主线程再次扫描根目录，以确保标记了所有活动对象，然后与许多帮助程序一起开始并行压缩和指针更新。并非所有旧空间中的页面都符合压缩条件 - 那些不符合压缩的页面将使用前面提到的自由列表进行扫描。主线程在暂停期间启动并发扫描任务。它们同时运行到并行压缩任务和主线程本身 - 即使JavaScript在主线程上运行，它们也可以继续运行。
 
@@ -136,7 +136,7 @@ V8 中的主要 GC 从并发标记开始。当堆接近动态计算的限制时�
 
 JavaScript的用户不能直接访问垃圾回收器;它完全是实现定义的。然而，V8确实为嵌入器提供了一种触发垃圾回收的机制，即使JavaScript程序本身不能。GC可以发布“空闲任务”，这是最终将被触发的可选工作。像Chrome这样的嵌入器可能有一些空闲时间或空闲时间的概念。例如，在Chrome中，以每秒60帧的速度，浏览器大约有16.6毫秒的时间来渲染动画的每一帧。如果动画工作提前完成，Chrome 可以选择在下一帧之前的空闲时间运行 GC 在空闲时间创建的一些空闲任务。
 
-![Idle GC makes use of free time on the main thread to perform GC work proactively.](/\_img/trash-talk/10.svg)
+![Idle GC makes use of free time on the main thread to perform GC work proactively.](../_img/trash-talk/10.svg)
 
 有关更多详细信息，请参阅[我们关于空闲时间GC的深入出版物](https://queue.acm.org/detail.cfm?id=2977741).
 

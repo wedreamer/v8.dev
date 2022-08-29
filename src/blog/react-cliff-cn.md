@@ -32,7 +32,7 @@
 
 每个 JavaScript 值恰好有八种不同类型的一种：（目前）：`Number`,`String`,`Symbol`,`BigInt`,`Boolean`,`Undefined`,`Null`和`Object`.
 
-![](/\_img/react-cliff/01-javascript-types.svg)
+![](../_img/react-cliff/01-javascript-types.svg)
 
 除了一个值得注意的例外，这些类型在JavaScript中可以通过`typeof`算子：
 
@@ -62,11 +62,11 @@ typeof { x: 42 };
 
 因此，`null`表示“无对象值”，而`undefined`意思是“没有价值”。
 
-![](/\_img/react-cliff/02-primitives-objects.svg)
+![](../_img/react-cliff/02-primitives-objects.svg)
 
 遵循这种思路，Brendan Eich 设计了 JavaScript 来制作`typeof`返回`'object'`对于右侧的所有值，即所有对象和`null`价值观，本着Java的精神。这就是为什么`typeof null === 'object'`尽管规格有一个单独的`Null`类型。
 
-![](/\_img/react-cliff/03-primitives-objects-typeof.svg)
+![](../_img/react-cliff/03-primitives-objects-typeof.svg)
 
 ## 值表示
 
@@ -185,7 +185,7 @@ const o = {
 
 价值`42`为`x`可以编码为`Smi`，因此它可以存储在对象本身的内部。价值`4.2`另一方面，需要一个单独的实体来保存值，并且对象指向该实体。
 
-![](/\_img/react-cliff/04-smi-vs-heapnumber.svg)
+![](../_img/react-cliff/04-smi-vs-heapnumber.svg)
 
 现在，假设我们运行以下 JavaScript 代码段：
 
@@ -198,11 +198,11 @@ o.y += 1;
 
 在本例中，值`x`可以就地更新，因为新值`52`也适合`Smi`范围。
 
-![](/\_img/react-cliff/05-update-smi.svg)
+![](../_img/react-cliff/05-update-smi.svg)
 
 但是，新值`y=5.2`不适合`Smi`并且也与以前的值不同`4.2`，因此 V8 必须分配一个新的`HeapNumber`要将任务分配到的实体`y`.
 
-![](/\_img/react-cliff/06-update-heapnumber.svg)
+![](../_img/react-cliff/06-update-heapnumber.svg)
 
 `HeapNumber`s 是不可变的，这可以实现某些优化。例如，如果我们分配`y`s 值`x`:
 
@@ -213,7 +213,7 @@ o.x = o.y;
 
 ...我们现在可以链接到相同的`HeapNumber`而不是为相同的值分配一个新的。
 
-![](/\_img/react-cliff/07-heapnumbers.svg)
+![](../_img/react-cliff/07-heapnumbers.svg)
 
 一个缺点`HeapNumber`s 是不可变的，因为更新字段时，使用`Smi`范围通常，如以下示例所示：
 
@@ -229,19 +229,19 @@ for (let i = 0; i < 5; ++i) {
 
 第一行将创建一个`HeapNumber`具有初始值的实例`0.1`.循环正文将此值更改为`1.1`,`2.1`,`3.1`,`4.1`，最后`5.1`，总共创建六个`HeapNumber`沿途的实例，循环完成后，其中五个是垃圾。
 
-![](/\_img/react-cliff/08-garbage-heapnumbers.svg)
+![](../_img/react-cliff/08-garbage-heapnumbers.svg)
 
 为避免此问题，V8 提供了一种更新非`Smi`数字字段也就地，作为优化。当数值字段保存`Smi`范围，V8 将该字段标记为`Double`字段在形状上，并分配一个所谓的`MutableHeapNumber`保存编码为 Float64 的实际值。
 
-![](/\_img/react-cliff/09-mutableheapnumber.svg)
+![](../_img/react-cliff/09-mutableheapnumber.svg)
 
 当字段的值更改时，V8 不再需要分配新的`HeapNumber`，但可以只更新`MutableHeapNumber`就地。
 
-![](/\_img/react-cliff/10-update-mutableheapnumber.svg)
+![](../_img/react-cliff/10-update-mutableheapnumber.svg)
 
 但是，这种方法也有一个陷阱。由于值`MutableHeapNumber`可以改变，重要的是这些不被传递。
 
-![](/\_img/react-cliff/11-mutableheapnumber-to-heapnumber.svg)
+![](../_img/react-cliff/11-mutableheapnumber-to-heapnumber.svg)
 
 例如，如果分配`o.x`到其他变量`y`，您不希望的值`y`更改下次`o.x`更改 - 这将违反JavaScript规范！因此，当`o.x`被访问，号码必须为*重新装箱*成为常规`HeapNumber`在将其分配给之前`y`.
 
@@ -257,7 +257,7 @@ object.x += 1;
 
 为了避免效率低下，对于小整数，我们所要做的就是将形状上的字段标记为`Smi`表示形式，只需更新数字值，只要它适合小整数范围即可。
 
-![](/\_img/react-cliff/12-smi-no-boxing.svg)
+![](../_img/react-cliff/12-smi-no-boxing.svg)
 
 ## 形状弃用和迁移
 
@@ -276,15 +276,15 @@ y = a.x;
 
 这从指向同一形状的两个对象开始，其中`x`标记为`Smi`表示法：
 
-![](/\_img/react-cliff/13-shape.svg)
+![](../_img/react-cliff/13-shape.svg)
 
 什么时候`b.x`更改为`Double`表示，V8 分配一个新形状，其中`x`已分配`Double`表示形式，并指向空形状。V8 还分配了一个`MutableHeapNumber`以保存新值`0.2`对于`x`财产。然后我们更新对象`b`指向此新形状，并将对象中的槽更改为指向先前分配的`MutableHeapNumber`偏移量为 0。最后，我们将旧形状标记为已弃用，并将其从过渡树中取消链接。这是通过对`'x'`从空形状到新创建的形状。
 
-![](/\_img/react-cliff/14-shape-transition.svg)
+![](../_img/react-cliff/14-shape-transition.svg)
 
 此时，我们无法完全删除旧形状，因为它仍由`a`，并且遍历内存以查找指向旧形状的所有对象并热切地更新它们将过于昂贵。相反，V8 懒惰地执行此操作：任何属性访问或分配`a`首先将其迁移到新形状。我们的想法是最终使已弃用的形状无法访问，并让垃圾回收器将其删除。
 
-![](/\_img/react-cliff/15-shape-deprecation.svg)
+![](../_img/react-cliff/15-shape-deprecation.svg)
 
 如果更改表示的字段是*不*链中的最后一个：
 
@@ -300,7 +300,7 @@ o.y = 0.1;
 
 在这种情况下，V8需要找到所谓的*分裂形状*，这是引入相关属性之前链中的最后一个形状。在这里，我们正在改变`y`，所以我们需要找到最后一个没有的形状`y`，在我们的示例中，它是引入的形状`x`.
 
-![](/\_img/react-cliff/16-split-shape.svg)
+![](../_img/react-cliff/16-split-shape.svg)
 
 从拆分形状开始，我们创建一个新的过渡链`y`它重播了所有以前的过渡，但`'y'`被标记为`Double`表示法。我们使用这个新的过渡链`y`，将旧子树标记为已弃用。在最后一步中，我们迁移实例`o`到新形状，使用`MutableHeapNumber`以保持`y`现在。这样，新对象就不会采用旧路径，并且一旦对旧形状的所有引用都消失，树中已弃用的形状部分就会消失。
 
@@ -353,7 +353,7 @@ Object.preventExtensions(b);
 
 它开始就像我们已经知道的那样，从空形状过渡到持有属性的新形状。`'x'`（表示为`Smi`).当我们阻止扩展到`b`，我们将执行到标记为不可扩展的新形状的特殊过渡。这种特殊的过渡不会引入任何新的属性 - 它实际上只是一个标记。
 
-![](/\_img/react-cliff/17-shape-nonextensible.svg)
+![](../_img/react-cliff/17-shape-nonextensible.svg)
 
 请注意，我们不能只用`x`就地，因为另一个对象需要它`a`，这仍然是可扩展的。
 
@@ -371,13 +371,13 @@ o.y = 0.2;
 
 正如我们之前所学到的，这大致创建了以下设置：
 
-![](/\_img/react-cliff/18-repro-shape-setup.svg)
+![](../_img/react-cliff/18-repro-shape-setup.svg)
 
 这两个属性都标记为`Smi`表示形式，最后的过渡是扩展性过渡，用于将形状标记为不可扩展。
 
 现在我们需要改变`y`自`Double`表示，这意味着我们需要再次从查找拆分形状开始。在本例中，是形状引入了`x`.但现在V8感到困惑，因为分裂的形状是可扩展的，而当前的形状被标记为不可扩展的。在这种情况下，V8并不真正知道如何正确重放过渡。因此，V8 基本上放弃了试图理解这一点，而是创建了一个单独的形状，该形状不连接到现有的形状树，也不与任何其他对象共享。将其视为*孤立形状*:
 
-![](/\_img/react-cliff/19-orphaned-shape.svg)
+![](../_img/react-cliff/19-orphaned-shape.svg)
 
 你可以想象，如果这种情况发生在很多物体上，那就太糟糕了，因为这会使整个形状系统变得毫无用处。
 
@@ -399,25 +399,25 @@ const node2 = new FiberNode();
 
 最初，上面的简化示例如下所示：
 
-![](/\_img/react-cliff/20-fibernode-shape.svg)
+![](../_img/react-cliff/20-fibernode-shape.svg)
 
 有两个实例共享一个形状树，所有实例都按预期工作。但是，当您存储实时时间戳时，V8 会困惑地找到拆分形状：
 
-![](/\_img/react-cliff/21-orphan-islands.svg)
+![](../_img/react-cliff/21-orphan-islands.svg)
 
 V8 将新的孤立形状分配给`node1`，同样的事情发生在`node2`一段时间后，导致两个*孤儿岛屿*，每个都有自己的不相交形状。许多现实世界的 React 应用程序不仅有两个，而是有数以万计的这些应用程序。`FiberNode`s.可以想象，这种情况对于V8的性能来说并不是特别好。
 
 幸[我们已经修复了这个性能悬崖](https://chromium-review.googlesource.com/c/v8/v8/+/1442640/)在[V8 v7.4](/blog/v8-release-74)，而我们是[希望使现场表示的变化更便宜](https://bit.ly/v8-in-place-field-representation-changes)以移除任何剩余的性能悬崖。修复后，V8 现在执行了正确的操作：
 
-![](/\_img/react-cliff/22-fix.svg)
+![](../_img/react-cliff/22-fix.svg)
 
 二`FiberNode`实例指向不可扩展的形状，其中`'actualStartTime'`是一个`Smi`田。当第一次分配到`node1.actualStartTime`发生时，将创建新的转换链，并将以前的链标记为已弃用：
 
-![](/\_img/react-cliff/23-fix-fibernode-shape-1.svg)
+![](../_img/react-cliff/23-fix-fibernode-shape-1.svg)
 
 请注意，扩展性转换现在如何在新链中正确重放。
 
-![](/\_img/react-cliff/24-fix-fibernode-shape-2.svg)
+![](../_img/react-cliff/24-fix-fibernode-shape-2.svg)
 
 分配到`node2.actualStartTime`，两个节点都引用新形状，并且垃圾回收器可以清理过渡树中已弃用的部分。
 

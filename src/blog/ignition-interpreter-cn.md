@@ -20,7 +20,7 @@ V8 和其他现代 JavaScript 引擎通过以下方式获得速度[实时 （JIT
 
 在Chrome 53中，Ignition将适用于RAM有限（512 MB或更小）的Android设备，其中最需要节省内存。该领域早期实验的结果表明，Ignition将每个Chrome标签的内存减少了约5%。
 
-![V8’s compilation pipeline with Ignition enabled](/\_img/ignition-interpreter/ignition-pipeline.png)
+![V8’s compilation pipeline with Ignition enabled](../_img/ignition-interpreter/ignition-pipeline.png)
 
 ## 详
 

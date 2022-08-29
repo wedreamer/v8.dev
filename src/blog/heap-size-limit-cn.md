@@ -22,6 +22,6 @@ V8 对其堆大小有硬性限制。这可以防止应用程序出现内存泄�
 
 我们还在 DevTools 中添加了一项功能，以便在应用程序接近内存不足时暂停应用程序。此功能可用于调查导致应用程序在短时间内分配大量内存的 Bug。运行时[此演示](https://ulan.github.io/misc/oom.html)使用最新的Chrome Canary，DevTools在内存不足故障之前暂停应用程序并增加堆限制，使用户有机会检查堆，在控制台上评估表达式以释放内存，然后恢复执行以进行进一步调试。
 
-![](/\_img/heap-size-limit/debugger.png)
+![](../_img/heap-size-limit/debugger.png)
 
 V8 嵌入器可以使用[`set_max_old_space_size`](https://codesearch.chromium.org/chromium/src/v8/include/v8.h?q=set_max_old_space_size)的功能`ResourceConstraints`应用程序接口。但请注意，垃圾回收器中的某些阶段对堆大小具有线性依赖性。垃圾回收暂停可能会随着堆的增大而增加。

@@ -23,7 +23,7 @@
 
 为了减少 V8 的内存使用量，我们现在只有在函数执行了一定量的字节码后才懒惰地分配反馈向量。这样可以避免为短期函数分配反馈向量，这些函数不会从收集的反馈中受益。我们的实验室实验表明，懒惰地分配反馈向量可节省约 2–8% 的 V8 堆大小。
 
-![](/\_img/v8-release-77/lazy-feedback-allocation.svg)
+![](../_img/v8-release-77/lazy-feedback-allocation.svg)
 
 我们从野外进行的实验表明，对于Chrome用户来说，这可以在桌面设备上将V8的堆大小减少1-2%，在移动平台上减少5-6%。台式机上没有性能下降，在移动平台上，我们实际上在内存有限的低端手机上看到了性能的提高。请留意有关我们最近工作的更详细的博客文章，以节省内存。
 
@@ -31,9 +31,9 @@
 
 在过去的里程碑中，我们研究了WebAssembly后台编译的可扩展性。您的计算机拥有的内核越多，您从这项工作中受益就越多。下图是在 24 核 Xeon 计算机上创建的，正在编译[史诗禅园演示](https://s3.amazonaws.com/mozilla-games/ZenGarden/EpicZenGarden.html).根据所使用的线程数，与 V8 v7.4 相比，编译花费的时间不到一半。
 
-![](/\_img/v8-release-77/liftoff-compilation-speedup.svg)
+![](../_img/v8-release-77/liftoff-compilation-speedup.svg)
 
-![](/\_img/v8-release-77/turbofan-compilation-speedup.svg)
+![](../_img/v8-release-77/turbofan-compilation-speedup.svg)
 
 ### 堆栈跟踪改进
 

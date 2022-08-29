@@ -16,15 +16,15 @@
 
 访问地图和布景的所有元素 - 通过[迭 代](http://exploringjs.com/es6/ch_iteration.html)或[`Map.prototype.forEach`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/forEach)/[`Set.prototype.forEach`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set/forEach)方法 — 速度明显加快，自 V8 版本 6.0 以来，原始性能提高了 11×检查[专门的博客文章](https://benediktmeurer.de/2017/07/14/faster-collection-iterators/)以获取更多信息。
 
-![](/\_img/v8-release-61/iterating-collections.svg)
+![](../_img/v8-release-61/iterating-collections.svg)
 
 除此之外，其他语言功能的性能工作仍在继续。例如，[`Object.prototype.isPrototypeOf`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/isPrototypeOf)方法，这对于主要使用对象文本的无构造函数代码非常重要，并且`Object.create`而不是类和构造函数，现在总是像使用一样快，而且通常更快[这`instanceof`算子](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/instanceof).
 
-![](/\_img/v8-release-61/checking-prototype.svg)
+![](../_img/v8-release-61/checking-prototype.svg)
 
 具有可变数量参数的函数调用和构造函数调用也明显更快。拨打电话[`Reflect.apply`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Reflect/apply)和[`Reflect.construct`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Reflect/construct)在最新版本中获得了高达17×的性能提升。
 
-![](/\_img/v8-release-61/call-construct.svg)
+![](../_img/v8-release-61/call-construct.svg)
 
 `Array.prototype.forEach`现在已内联在 TurboFan 中，并针对所有主要无孔进行优化[元素种类](/blog/elements-kinds).
 

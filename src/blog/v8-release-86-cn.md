@@ -68,7 +68,7 @@ function clampZero(f32array) {
 
 使用 Liftoff 标量实现作为基线，我们会看到以下结果：
 
-![A graph showing Liftoff SIMD being ~2.8× faster than Liftoff scalar vs. TurboFan SIMD being ~7.5× faster](/\_img/v8-release-86/simd.svg)
+![A graph showing Liftoff SIMD being ~2.8× faster than Liftoff scalar vs. TurboFan SIMD being ~7.5× faster](../_img/v8-release-86/simd.svg)
 
 ### 更快的 Wasm 到 JS 调用
 

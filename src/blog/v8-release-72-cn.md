@@ -25,11 +25,11 @@
 
 平均而言，网页在启动时花费9.5%的V8时间来解析JavaScript。因此，我们专注于在 v7.2 中发布 V8 最快的 JavaScript 解析器。我们全面提高了解析速度。自 v7.0 起，桌面上的解析速度提高了约 30%。下图记录了过去几个月来我们实际Facebook加载基准测试的令人印象深刻的改进。
 
-![V8 parse time on facebook.com (lower is better)](/\_img/v8-release-72/facebook-parse-time.png)
+![V8 parse time on facebook.com (lower is better)](../_img/v8-release-72/facebook-parse-time.png)
 
 我们在不同的场合专注于解析器。下图显示了几个热门网站相对于最新 v7.2 版本的改进。
 
-![V8 parse times relative to V8 v7.2 (lower is better)](/\_img/v8-release-72/relative-parse-times.svg)
+![V8 parse times relative to V8 v7.2 (lower is better)](../_img/v8-release-72/relative-parse-times.svg)
 
 总而言之，最近的改进已将平均解析百分比从 9.5% 降低到 7.5%，从而缩短了加载速度，提高了页面响应速度。
 

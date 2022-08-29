@@ -1,7 +1,7 @@
 ***
 
 标题：“更快、功能更丰富的国际化 API”
-作者： '[சத்யா குணசேகரன் （Sathya Gunasekaran）](https://twitter.com/\_gsathya)'
+作者： '[சத்யா குணசேகரன் （Sathya Gunasekaran）](https://twitter.com../_gsathya)'
 日期： 2019-04-25 16：45：37
 化身：
 
@@ -50,7 +50,7 @@ ICU 是一组 C/C++库，由大量应用程序（包括所有主要的 JavaScrip
 
 例如，创建一个新的`Intl.NumberFormat`物体变得大约24×快。
 
-![Microbenchmarks testing the performance of creating various Intl objects](/\_img/intl/performance.svg)
+![Microbenchmarks testing the performance of creating various Intl objects](../_img/intl/performance.svg)
 
 请注意，为了获得更好的性能，建议显式创建*和重用*一`Intl.NumberFormat`或`Intl.DateTimeFormat`或`Intl.Collator`对象，而不是调用类似`toLocaleString`或`localeCompare`.
 

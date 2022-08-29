@@ -23,7 +23,7 @@
 
 `Object.is()`现在的表现与替代方案大致相当。总的来说，V8 v6.3 继续朝着更好的 ES2015+ 性能迈进。除了其他项目，我们提升了[多态访问符号的速度](https://bugs.chromium.org/p/v8/issues/detail?id=6367),[构造函数调用的多态内联](https://bugs.chromium.org/p/v8/issues/detail?id=6885)和[（标记）模板文本](https://pasteboard.co/GLYc4gt.png).
 
-![V8’s performance over the past six releases](/\_img/v8-release-63/ares6.svg)
+![V8’s performance over the past six releases](../_img/v8-release-63/ares6.svg)
 
 弱优化功能列表消失了。更多信息可以在[专门的博客文章](/blog/lazy-unlinking).
 

@@ -25,7 +25,7 @@ TL;DR：从Chrome 66开始，V8在后台线程上编译JavaScript源代码，在
 
 V8 的 Ignition 字节码编译器采用[抽象语法树 （AST）](https://en.wikipedia.org/wiki/Abstract_syntax_tree)由解析器作为输入生成，并生成字节码流（`BytecodeArray`） 以及相关的元数据，使 Ignition 解释器能够执行 JavaScript 源代码。
 
-![](/\_img/background-compilation/bytecode.svg)
+![](../_img/background-compilation/bytecode.svg)
 
 Ignition的字节码编译器在构建时考虑了多线程，但是在整个编译管道中需要进行许多更改才能启用后台编译。其中一个主要变化是防止编译管道在后台线程上运行时访问 V8 的 JavaScript 堆中的对象。V8 堆中的对象不是线程安全的，因为 Javascript 是单线程的，在后台编译期间可能会被主线程或 V8 的垃圾回收器修改。
 
@@ -35,7 +35,7 @@ Ignition的字节码编译器在构建时考虑了多线程，但是在整个编
 
 通过这些更改，几乎所有脚本的编译都可以移动到后台线程，只有简短的AST内部化和字节码完成步骤发生在脚本执行之前的主线程上。
 
-![](/\_img/background-compilation/threads.svg)
+![](../_img/background-compilation/threads.svg)
 
 目前，只有顶级脚本代码和立即调用的函数表达式 （IIFE） 在后台线程上编译 — 内部函数仍然在主线程上延迟编译（首次执行时）。我们希望将来将后台编译扩展到更多情况。但是，即使有这些限制，后台编译也会使主线程自由化更长时间，使其能够执行其他工作，例如对用户交互做出反应，渲染动画或以其他方式产生更流畅，响应更快的体验。
 
@@ -43,9 +43,9 @@ Ignition的字节码编译器在构建时考虑了多线程，但是在整个编
 
 我们使用[现实世界的基准框架](/blog/real-world-performance)跨一组热门网页。
 
-![](/\_img/background-compilation/desktop.svg)
+![](../_img/background-compilation/desktop.svg)
 
-![](/\_img/background-compilation/mobile.svg)
+![](../_img/background-compilation/mobile.svg)
 
 在后台线程上可能发生的编译比例取决于在顶级流式处理脚本编译期间编译的字节码的比例，以及在调用内部函数时延迟编译（这仍然必须发生在主线程上）。因此，在主线程上节省的时间比例各不相同，大多数页面的主线程编译时间减少了5%到20%。
 

@@ -14,7 +14,7 @@
 
 从 v8.8 开始，V8 配备了一个新的实验性非回溯 RegExp 引擎（除了现有的[Irregexp engine](https://blog.chromium.org/2009/02/irregexp-google-chromes-new-regexp.html)）， 它保证相对于主题字符串大小的线性时间执行。实验引擎位于下面提到的功能标志后面。
 
-![Runtime of /(a\*)\*b/.exec('a'.repeat(n)) for n ≤ 100](/\_img/non-backtracking-regexp/runtime-plot.svg)
+![Runtime of /(a\*)\*b/.exec('a'.repeat(n)) for n ≤ 100](../_img/non-backtracking-regexp/runtime-plot.svg)
 
 下面介绍如何配置新的正则表达式引擎：
 
@@ -49,13 +49,13 @@ V8 中的 RegExp 匹配由 Irregexp 引擎处理。Irregexp jit-compile RegExps 
 
 要了解一种不受灾难性回溯影响的替代算法，我们必须通过以下方式快速绕道而行[胞 自动 机](https://en.wikipedia.org/wiki/Nondeterministic_finite_automaton).每个正则表达式都等效于一个自动机。例如，正则表达式`/(a*)*b/`以上对应于以下自动机：
 
-![Automaton corresponding to /(a\*)\*b/](/\_img/non-backtracking-regexp/example-automaton.svg)
+![Automaton corresponding to /(a\*)\*b/](../_img/non-backtracking-regexp/example-automaton.svg)
 
 请注意，自动机不是由模式唯一确定的;您在上面看到的是您将通过机械翻译过程获得的自动机，它是V8的新RegExp引擎中使用的自动机。`/(a*)*/`.
 未标记的边缘是 epsilon 转换：它们不消耗输入。Epsilon 转换对于将自动机的大小保持在阵列大小附近是必要的。天真地消除ε跃迁会导致跃迁次数的二次增加。
 Epsilon 转换还允许从以下四种基本状态构造对应于 RegExp 的自动机：
 
-![RegExp bytecode instructions](/\_img/non-backtracking-regexp/state-types.svg)
+![RegExp bytecode instructions](../_img/non-backtracking-regexp/state-types.svg)
 
 这里我们只对过渡进行分类*外*的状态，而向状态的转换仍然被允许是任意的。仅从这些类型的状态构建的自动机可以表示为*字节码程序*，其中每个状态都对应于一条指令。例如，具有两个 epsilon 转换的状态表示为`FORK`指令。
 

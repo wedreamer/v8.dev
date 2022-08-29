@@ -27,17 +27,17 @@
 
 今年早些时候，我们在 V8 中添加了对 JavaScript 代码覆盖率的本机支持。版本 5.9 中的初始版本提供了函数粒度的覆盖范围（显示已执行的函数），后来扩展到支持 v6.2 中块粒度的覆盖范围（同样，但对于单个表达式）。
 
-![Function granularity (left) and block granularity (right)](/\_img/javascript-code-coverage/function-vs-block.png)
+![Function granularity (left) and block granularity (right)](../_img/javascript-code-coverage/function-vs-block.png)
 
 ### 对于 JavaScript 开发人员
 
 目前有两种主要方法可以访问覆盖范围信息。对于JavaScript开发人员，Chrome DevTools的[“覆盖范围”选项卡](https://developers.google.com/web/updates/2017/04/devtools-release-notes#coverage)公开 JS（和 CSS）覆盖率，并在“源”面板中突出显示死代码。
 
-![Block coverage in the DevTools Coverage pane. Covered lines are highlighted in green, uncovered in red.](/\_img/javascript-code-coverage/block-coverage.png)
+![Block coverage in the DevTools Coverage pane. Covered lines are highlighted in green, uncovered in red.](../_img/javascript-code-coverage/block-coverage.png)
 
 由于[本杰明·科](https://twitter.com/BenjaminCoe)，还有[持续](https://github.com/bcoe/c8)致力于将V8的代码覆盖率信息集成到流行的[伊斯坦布尔.js](https://istanbul.js.org/)代码覆盖率工具。
 
-![An Istanbul.js report based on V8 coverage data.](/\_img/javascript-code-coverage/istanbul.png)
+![An Istanbul.js report based on V8 coverage data.](../_img/javascript-code-coverage/istanbul.png)
 
 ### 对于嵌入器
 

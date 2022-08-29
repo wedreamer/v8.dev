@@ -246,7 +246,7 @@ var readLines = function () {
 
 如上所述，ES2015+功能的绝对性能在这一点上并不是一个真正的问题。相反，目前最优先考虑的是确保ES2015 +功能的性能与其朴素的ES5相当，更重要的是，与Babel生成的版本相当。方便的是，已经有一个名为[六速](https://github.com/kpdecker/six-speed)由[凯文·德克尔](http://www.incaseofstairs.com/)，这或多或少地完成了我们所需要的：ES2015 功能与朴素的 ES5 与转译器生成的代码的性能比较。
 
-![The SixSpeed benchmark](/\_img/high-performance-es2015/sixspeed.png)
+![The SixSpeed benchmark](../_img/high-performance-es2015/sixspeed.png)
 
 因此，我们决定将其作为我们最初的ES2015 +性能工作的基础。我们[分叉六速](https://fhinkel.github.io/six-speed/)并添加了几个基准测试。我们首先关注最严重的回归，即从幼稚的ES5到推荐的ES2015 +版本的减速速度超过2倍的行项目，因为我们的基本假设是，幼稚的ES5版本将至少与Babel生成的符合规范的版本一样快。
 
@@ -258,17 +258,17 @@ var readLines = function () {
 
 我们对现代语言功能的许多改进只有在新的Ignition/TurboFan管道下才可行。事实证明，点火和涡轮风扇对于优化发电机和异步功能尤其重要。发电机长期以来一直由V8支持，但由于曲轴的控制流量限制而无法优化。异步函数本质上是生成器之上的糖，因此它们属于同一类别。新的编译器管道利用Ignition来理解AST并生成字节码，这些字节码将复杂的生成器控制分解为更简单的本地控制流字节码。TurboFan可以更轻松地优化生成的字节码，因为它不需要知道有关发电机控制流程的任何具体信息，只需了解如何保存和恢复函数的收益率状态即可。
 
-![How JavaScript generators are represented in Ignition and TurboFan](/\_img/high-performance-es2015/generators.svg)
+![How JavaScript generators are represented in Ignition and TurboFan](../_img/high-performance-es2015/generators.svg)
 
 ## 国情咨文
 
 我们的短期目标是尽快达到平均减速2×以下。我们首先查看最差的测试，从Chrome 54到Chrome 58（金丝雀），我们设法将减速超过2×的测试数量从16个减少到8个，同时将Chrome 54中最糟糕的减速从19×减少到Chrome 58（金丝雀）的6×我们还显著降低了在此期间的平均值和中位数放缓：
 
-![Slowdown of ES2015+ compared to native ES5 equivalent](/\_img/high-performance-es2015/slowdown.svg)
+![Slowdown of ES2015+ compared to native ES5 equivalent](../_img/high-performance-es2015/slowdown.svg)
 
 您可以看到ES2015 +和ES5的奇偶校验的明显趋势。平均而言，与 ES5 相比，我们的性能提高了 47% 以上。以下是自 Chrome 54 以来我们解决的一些亮点。
 
-![ES2015+ performance compared to naive ES5 equivalent](/\_img/high-performance-es2015/comparison.svg)
+![ES2015+ performance compared to naive ES5 equivalent](../_img/high-performance-es2015/comparison.svg)
 
 最值得注意的是，我们改进了基于迭代的新语言结构的性能，如传播运算符，解构和`for`-`of`循环。例如，使用数组解构：
 

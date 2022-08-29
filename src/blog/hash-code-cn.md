@@ -1,7 +1,7 @@
 ***
 
 标题：“优化哈希表：隐藏哈希代码”
-作者： '[萨提亚·古纳塞卡兰](https://twitter.com/\_gsathya)，哈希代码的守护者
+作者： '[萨提亚·古纳塞卡兰](https://twitter.com../_gsathya)，哈希代码的守护者
 化身：
 
 *   'sathya-gunasekaran'
@@ -75,7 +75,7 @@ x['foo'] = 'bar';  // ← stored in properties
 
 对于空情况，我们可以直接将哈希代码存储在此偏移量上`JSObject`.
 
-![](/\_img/hash-code/properties-backing-store-empty.png)
+![](../_img/hash-code/properties-backing-store-empty.png)
 
 ### 属性后备存储是一个数组
 
@@ -83,13 +83,13 @@ V8 表示小于 2 的整数<sup>31</sup>（在 32 位系统上）未装箱，如
 
 通常，数组将其长度存储为 Smi。由于我们知道此数组的最大容量仅为 1022，因此我们只需要 10 位来存储长度。我们可以使用剩余的21位来存储哈希代码！
 
-![](/\_img/hash-code/properties-backing-store-array.png)
+![](../_img/hash-code/properties-backing-store-array.png)
 
 ### 属性后备存储是字典
 
 对于字典情况，我们将字典大小增加 1 个单词，以将哈希代码存储在字典开头的专用插槽中。在这种情况下，我们可能会浪费一字内存，因为大小的比例增加并不像数组情况那样大。
 
-![](/\_img/hash-code/properties-backing-store-dictionary.png)
+![](../_img/hash-code/properties-backing-store-dictionary.png)
 
 通过这些更改，哈希代码查找不再需要通过复杂的JavaScript属性查找机制。
 
@@ -97,12 +97,12 @@ V8 表示小于 2 的整数<sup>31</sup>（在 32 位系统上）未装箱，如
 
 这[六速](https://github.com/kpdecker/six-speed)benchmark 跟踪 Map 和 Set 的性能，这些更改带来了大约 500% 的改进。
 
-![](/\_img/hash-code/sixspeed.png)
+![](../_img/hash-code/sixspeed.png)
 
 此更改导致基本基准测试提高了 5%[阿瑞斯6](https://webkit.org/blog/7536/jsc-loves-es6/)也。
 
-![](/\_img/hash-code/ares-6.png)
+![](../_img/hash-code/ares-6.png)
 
 这也使[恩贝佩夫](http://emberperf.eviltrout.com/)测试Ember.js的基准套件。
 
-![](/\_img/hash-code/emberperf.jpg)
+![](../_img/hash-code/emberperf.jpg)

@@ -58,7 +58,7 @@ V8 在同一天开源[Chrome 推出](https://blog.chromium.org/2008/09/welcome-t
 
 Chrome 多年来的 V8 Bench 得分显示了 V8 更改对性能的影响。（我们使用的是 V8 Bench，因为它是为数不多的仍然可以在原始 Chrome 测试版中运行的基准测试之一。
 
-![Chrome’s V8 Bench score from 2008 to 2018](/\_img/10-years/v8-bench.svg)
+![Chrome’s V8 Bench score from 2008 to 2018](../_img/10-years/v8-bench.svg)
 
 我们在这个基准上的分数上升了**4×**在过去的十年里！
 
@@ -66,7 +66,7 @@ Chrome 多年来的 V8 Bench 得分显示了 V8 更改对性能的影响。（�
 
 从这张图表中得出的另一个结论是，它在2013年左右开始趋于平稳。这是否意味着V8放弃了并停止了对性能的投资？恰恰相反！图形的扁平化代表了 V8 团队从合成微基准测试（如 V8 Bench 和 Octane）到优化[实际性能](/blog/real-world-performance).V8 Bench是一个旧的基准测试，它不使用任何现代JavaScript功能，也不接近实际的现实世界生产代码。将此与较新的速度计基准测试套件进行对比：
 
-![Chrome’s Speedometer 1 score from 2013 to 2018](/\_img/10-years/speedometer-1.svg)
+![Chrome’s Speedometer 1 score from 2013 to 2018](../_img/10-years/speedometer-1.svg)
 
 尽管V8 Bench从2013年到2018年几乎没有改进，但我们的车速表1得分却上升了（另一个）**4×**在同一时间段内。（我们使用 Speedometer 1 是因为 Speedometer 2 使用了 2013 年尚不支持的现代 JavaScript 功能。
 

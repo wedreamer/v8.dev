@@ -20,7 +20,7 @@
 
 扫描程序使用 Unicode 字符流。这些 Unicode 字符始终从 UTF-16 代码单元流进行解码。只支持一种编码，以避免对扫描程序和解析器进行分支或专用化各种编码，我们选择了 UTF-16，因为这是 JavaScript 字符串的编码，并且需要相对于该编码提供源位置。这[`UTF16CharacterStream`](https://cs.chromium.org/chromium/src/v8/src/scanner.h?rcl=edf3dab4660ed6273e5d46bd2b0eae9f3210157d\&l=46)提供（可能是缓冲的）UTF-16 视图，用于 V8 从 Chrome 接收的基础 Latin1、UTF-8 或 UTF-16 编码，而 Chrome 又从网络接收这些编码。除了支持多种编码之外，扫描仪和字符流之间的分离还允许 V8 透明地扫描，就好像整个源都可用一样，即使到目前为止我们可能只通过网络接收了部分数据。
 
-![](/\_img/scanner/overview.svg)
+![](../_img/scanner/overview.svg)
 
 扫描仪和字符流之间的接口是一个名为[`Utf16CharacterStream::Advance()`](https://cs.chromium.org/chromium/src/v8/src/scanner.h?rcl=edf3dab4660ed6273e5d46bd2b0eae9f3210157d\&l=54)返回下一个 UTF-16 代码单元，或者`-1`以标记输入的结尾。UTF-16 不能在单个代码单元中对每个 Unicode 字符进行编码。外部字符[基本多语言平面](https://en.wikipedia.org/wiki/Plane_\(Unicode\)#Basic_Multilingual_Plane)编码为两个代码单元，也称为代理项对。扫描程序使用 Unicode 字符而不是 UTF-16 代码单元进行操作，因此它将此低级流接口包装在[`Scanner::Advance()`](https://cs.chromium.org/chromium/src/v8/src/scanner.h?sq=package:chromium\&g=0\&rcl=edf3dab4660ed6273e5d46bd2b0eae9f3210157d\&l=569)将 UTF-16 代码单元解码为完整 Unicode 字符的方法。当前解码的字符被缓冲并通过扫描方法拾取，例如[`Scanner::ScanString()`](https://cs.chromium.org/chromium/src/v8/src/scanner.cc?rcl=edf3dab4660ed6273e5d46bd2b0eae9f3210157d\&l=775).
 
@@ -34,7 +34,7 @@
 
 然而，循环本身会增加每个扫描令牌的开销：它需要一个分支来验证我们刚刚扫描的令牌。最好仅在我们刚刚扫描的令牌可以是`Token::WHITESPACE`.否则，我们应该打破循环。我们通过将循环本身移动到单独的循环中来做到这一点。[帮助程序方法](https://cs.chromium.org/chromium/src/v8/src/parsing/scanner-inl.h?rcl=d62ec0d84f2ec8bc0d56ed7b8ed28eaee53ca94e\&l=178)当我们确定令牌不是时，我们会立即返回`Token::WHITESPACE`.尽管这些类型的更改可能看起来很小，但它们会消除每个扫描令牌的开销。这对于标点符号等非常短的标记尤其有用：
 
-![](/\_img/scanner/punctuation.svg)
+![](../_img/scanner/punctuation.svg)
 
 ## 标识符扫描
 
@@ -44,11 +44,11 @@
 
 本文中提到的所有改进加起来，标识符扫描性能存在以下差异：
 
-![](/\_img/scanner/identifiers-1.svg)
+![](../_img/scanner/identifiers-1.svg)
 
 较长的标识符扫描速度更快似乎有悖常理。这可能会让您认为增加标识符长度对性能有益。扫描较长的标识符在 MB/s 方面只是更快，因为我们在非常紧密的循环中停留的时间更长，而不会返回到解析器。但是，从应用程序性能的角度来看，您关心的是我们可以以多快的速度扫描完整令牌。下图大致显示了我们每秒扫描的相对于令牌长度的令牌数：
 
-![](/\_img/scanner/identifiers-2.svg)
+![](../_img/scanner/identifiers-2.svg)
 
 在这里，很明显，使用较短的标识符有利于应用程序的解析性能：我们能够每秒扫描更多的令牌。这意味着我们似乎以MB / s解析速度更快的站点只是具有较低的信息密度，并且实际上每秒产生的令牌更少。
 
@@ -64,7 +64,7 @@
 
 更好的做法是使用一种称为[完美的散列](https://en.wikipedia.org/wiki/Perfect_hash_function).由于关键字列表是静态的，因此我们可以计算一个完美的哈希函数，对于每个标识符，该函数最多为我们提供一个候选关键字。V8 用途[gperf](https://www.gnu.org/software/gperf/)以计算此函数。这[结果](https://cs.chromium.org/chromium/src/v8/src/parsing/keywords-gen.h)根据长度和前两个标识符字符计算哈希，以查找单个候选关键字。仅当关键字的长度与输入标识符长度匹配时，我们才会将标识符与关键字进行比较。这尤其加快了标识符不是关键字的情况，因为我们需要更少的分支来弄清楚它。
 
-![](/\_img/scanner/keywords.svg)
+![](../_img/scanner/keywords.svg)
 
 ## 代理项对
 
@@ -74,7 +74,7 @@
 
 扫描仪与`UTF16CharacterStream`使边界非常有状态。流跟踪其在缓冲区中的位置，该位置在每个消耗的代码单元之后递增。扫描程序在返回到请求该字符的扫描方法之前缓冲接收到的代码单元。该方法读取缓冲字符并根据其值继续。这提供了很好的分层，但相当慢。去年秋天，我们的实习生Florian Sattler提出了一个改进的界面，它保留了分层的好处，同时提供了对流中代码单元的更快访问。模板化函数[`AdvanceUntil`](https://cs.chromium.org/chromium/src/v8/src/parsing/scanner.h?rcl=d4096d05abfc992a150de884c25361917e06c6a9\&l=72)，专用于特定的扫描帮助程序，为流中的每个字符调用帮助程序，直到帮助程序返回 false。这实质上提供了扫描程序对基础数据的直接访问，而不会破坏抽象。它实际上简化了扫描助手功能，因为它们不需要处理`EndOfInput`.
 
-![](/\_img/scanner/advanceuntil.svg)
+![](../_img/scanner/advanceuntil.svg)
 
 `AdvanceUntil`对于加速可能需要消耗大量字符的扫描函数特别有用。我们用它来加速前面已经显示的标识符，以及字符串\[^2]和注释。
 

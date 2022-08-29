@@ -33,7 +33,7 @@ WebAssembly Threads/Atomics 现在在非 Android 操作系统上启用。至此�
 
 在某些情况下，引擎知道参数适应不是必需的，因为无法观察到实际参数，即当被调用方是严格模式函数时，并且两者都不使用`arguments`也不是 rest 参数。在这些情况下，V8 现在完全跳过了参数调整，从而将调用开销降低多达**60%**.
 
-![Performance impact of skipping arguments adaption, as measured through a micro-benchmark.](/\_img/v8-release-74/argument-mismatch-performance.svg)
+![Performance impact of skipping arguments adaption, as measured through a micro-benchmark.](../_img/v8-release-74/argument-mismatch-performance.svg)
 
 该图显示，即使参数不匹配（假设被调用方无法观察实际参数），也不再有开销。有关更多详细信息，请参阅[设计文档](https://bit.ly/v8-faster-calls-with-arguments-mismatch).
 
@@ -41,7 +41,7 @@ WebAssembly Threads/Atomics 现在在非 Android 操作系统上启用。至此�
 
 Angular 团队[发现](https://mhevery.github.io/perf-tests/DOM-megamorphic.html)直接通过各自的访问器（即 DOM 属性访问器）调用本机访问器`get`Chrome 中的函数明显慢于[单态](https://en.wikipedia.org/wiki/Inline_caching#Monomorphic_inline_caching)甚至[巨态](https://en.wikipedia.org/wiki/Inline_caching#Megamorphic_inline_caching)属性访问。这是由于在 V8 中采用慢速路径来调用 DOM 访问器，通过[`Function#call()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/call)，而不是已经存在用于属性访问的快速路径。
 
-![](/\_img/v8-release-74/native-accessor-performance.svg)
+![](../_img/v8-release-74/native-accessor-performance.svg)
 
 我们设法提高了调用本机访问器的性能，使其比巨型属性访问快得多。有关更多背景信息，请参阅[V8 问题 #8820](https://bugs.chromium.org/p/v8/issues/detail?id=8820).
 
@@ -51,7 +51,7 @@ Angular 团队[发现](https://mhevery.github.io/perf-tests/DOM-megamorphic.html
 
 我们在 V8 的 preparser 中发现了另一个问题，它最常在工作线程上运行：属性名称被不必要地重复数据删除。删除此重复数据删除可将流式分析器再提高 10.5%。这还缩短了未流式传输的脚本（如小脚本和内联脚本）的主线程解析时间。
 
-![Each drop in the above chart represents one of the performance improvements in the streaming parser.](/\_img/v8-release-74/parser-performance.jpg)
+![Each drop in the above chart represents one of the performance improvements in the streaming parser.](../_img/v8-release-74/parser-performance.jpg)
 
 ## 记忆
 
@@ -63,7 +63,7 @@ Angular 团队[发现](https://mhevery.github.io/perf-tests/DOM-megamorphic.html
 
 我们对字节码刷新的实验表明，它为Chrome用户节省了大量内存，将V8堆中的内存量减少了5-15%，同时不会降低性能或显着增加编译JavaScript代码所花费的CPU时间。
 
-![](/\_img/v8-release-74/bytecode-flushing.svg)
+![](../_img/v8-release-74/bytecode-flushing.svg)
 
 ### 字节码死基本块消除
 

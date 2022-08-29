@@ -51,7 +51,7 @@ window.globalVariable = new Leak();
 
 了解保留路径的概念以查找内存泄漏的根本原因非常重要。保留路径是一个对象链，用于防止对泄漏对象进行垃圾回收。链从根对象（如主窗口的全局对象）开始。链条在泄漏物体处结束。链中的每个中间对象都有对链中下一个对象的直接引用。例如，保留路径的`Leak`iframe 中的对象如下所示：
 
-![Figure 1: Retaining path of an object leaked via iframe and event listener](/\_img/tracing-js-dom/retaining-path.svg)
+![Figure 1: Retaining path of an object leaked via iframe and event listener](../_img/tracing-js-dom/retaining-path.svg)
 
 请注意，保留路径与 JavaScript/DOM 边界（分别以绿色/红色突出显示）相交两次。JavaScript 对象位于 V8 堆中，而 DOM 对象C++对象存在于 Chrome 中。
 
@@ -59,7 +59,7 @@ window.globalVariable = new Leak();
 
 我们可以通过在 DevTools 中拍摄堆快照来检查任何对象的保留路径。堆快照精确捕获 V8 堆上的所有对象。直到最近，它只有关于C++DOM对象的近似信息。例如，Chrome 65 显示了一个不完整的保留路径`Leak`玩具示例中的对象：
 
-![Figure 2: Retaining path in Chrome 65](/\_img/tracing-js-dom/chrome-65.png)
+![Figure 2: Retaining path in Chrome 65](../_img/tracing-js-dom/chrome-65.png)
 
 只有第一行是精确的：`Leak`对象确实存储在`global_variable`的 iframe 的窗口对象。后续行近似于实际的保留路径，并使内存泄漏的调试变得困难。
 

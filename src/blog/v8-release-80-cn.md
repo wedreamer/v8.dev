@@ -44,7 +44,7 @@ V8 堆包含一整组项目，例如浮点值、字符串字符、编译代码�
 
 对我们来说幸运的是，我们有一个诀窍。顶部位可以从较低位合成。然后，我们只需要将唯一的较低位存储到堆中，从而节省宝贵的内存资源...平均节省40%的堆内存！
 
-![Pointer compression saves an average of 40% of memory.](/\_img/v8-release-80/pointer-compression-chart.svg)
+![Pointer compression saves an average of 40% of memory.](../_img/v8-release-80/pointer-compression-chart.svg)
 
 在改善内存时，通常以牺牲性能为代价。通常。我们很自豪地宣布，在V8中花费的时间内，我们看到真实网站的性能有所提高，并且垃圾收集器也是如此！
 

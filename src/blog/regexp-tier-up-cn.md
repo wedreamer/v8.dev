@@ -62,13 +62,13 @@ re.exec(str);
 
 ## 结果
 
-![Figure 1: Memory savings for different tier-up values](/\_img/regexp-tier-up/results-memory.svg)
+![Figure 1: Memory savings for different tier-up values](../_img/regexp-tier-up/results-memory.svg)
 
 图1显示了Facebook，Reddit，Twitter和Tumblr浏览故事的不同分层策略对内存的影响。默认值是 JITted 代码的大小，然后我们有最终使用的正则表达式代码的大小（如果我们不分层，则使用字节码大小，如果我们这样做，则使用本机代码大小）来初始化为 1、10 和 100。最后，如果我们解释所有正则表达式，我们将拥有正则表达式代码的大小。我们已经使用这些结果和其他基准来决定使用初始化为 1 的刻度来打开向上层，即我们解释正则表达式一次，然后向上分层。
 
 通过这种分层策略，我们在真实站点上将 V8 的堆代码大小减少了 4% 到 7%，将 V8 的有效大小减少了 1% 到 2%。
 
-![Figure 2: RegExp performance comparison](/\_img/regexp-tier-up/results-speed.svg)
+![Figure 2: RegExp performance comparison](../_img/regexp-tier-up/results-speed.svg)
 
 图 2 显示了本博客文章\[^strict-bounds] 中描述的对 RexBench 基准测试套件上所有改进的 RegExp 解释器性能的影响。作为参考，还显示了 JIT 编译的正则表达式的性能（本机）。
 

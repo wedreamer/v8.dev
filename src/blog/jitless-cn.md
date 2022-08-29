@@ -32,7 +32,7 @@ V8 新的无 JIT 模式旨在解决这些问题。当 V8 启动时`--jitless`标
 
 由于无 JIT 模式会禁用优化编译器，因此会降低性能。我们查看了各种基准测试，以更好地了解 V8 的性能特征是如何变化的。[车速表 2.0](/blog/speedometer-2)旨在表示典型的 Web 应用程序;这[网络工具基准测试](/blog/web-tooling-benchmark)包括一组常见的JS开发人员工具;我们还包括一个模拟[在客厅YouTube应用程序上浏览工作流程](https://chromeperf.appspot.com/report?sid=518c637ffa0961f965afe51d06979375467b12b87e72061598763e5a36876306).所有测量都是在 x64 Linux 桌面上进行本地进行的，运行了 5 次。
 
-![JIT-less vs. default V8. Scores are normalized to 100 for V8’s default configuration.](/\_img/jitless/benchmarks.svg)
+![JIT-less vs. default V8. Scores are normalized to 100 for V8’s default configuration.](../_img/jitless/benchmarks.svg)
 
 在无JIT模式下，车速表2.0慢约40%。大约一半的回归可以归因于禁用的优化编译器。另一半是由正则表达式解释器引起的，它最初是作为调试辅助工具的，将来会看到性能的提高。
 

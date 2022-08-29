@@ -47,7 +47,7 @@ LLVM WebAssembly后端在Emscripten中已经成为一个选项已经有一段时
 
 ### 代码大小
 
-![Code size measurements (lower is better)](/\_img/emscripten-llvm-wasm/size.svg)
+![Code size measurements (lower is better)](../_img/emscripten-llvm-wasm/size.svg)
 
 （此处的所有尺寸都标准化为 fastcomp。如您所见，WebAssembly后端的大小几乎总是更小！这种差异在左侧较小的微基准标记（小写名称）上更为明显，其中系统库的新改进更重要。但是，即使在右侧的大多数宏模板标记（大写名称）上，代码大小也会减小，这些宏模板是现实世界的代码库。宏基准上的一个回归是LZMA，其中较新的LLVM做出不同的内联决策，最终不走运。
 
@@ -61,7 +61,7 @@ LLVM WebAssembly后端在Emscripten中已经成为一个选项已经有一段时
 
 ### 速度
 
-![Speed measurements (lower is better)](/\_img/emscripten-llvm-wasm/speed.svg)
+![Speed measurements (lower is better)](../_img/emscripten-llvm-wasm/speed.svg)
 
 （测量值在 V8 上。在微基准标记中，速度是一幅喜忧参半的画面——这并不奇怪，因为它们中的大多数都由单个函数甚至循环主导，因此对Emscripten发出的代码的任何更改都可能导致VM做出幸运或不幸的优化选择。总体而言，大约相同数量的微基准与改善或倒退的微基准保持不变。看看更现实的宏观模板标记，LZMA再次成为异常值，再次因为前面提到的一个不吉利的内联决策，但除此之外，每个宏观模板标记都会得到改善！
 
@@ -69,7 +69,7 @@ LLVM WebAssembly后端在Emscripten中已经成为一个选项已经有一段时
 
 ### 构建时间
 
-![Compile and link time measurements on BananaBread (lower is better)](/\_img/emscripten-llvm-wasm/build.svg)
+![Compile and link time measurements on BananaBread (lower is better)](../_img/emscripten-llvm-wasm/build.svg)
 
 构建时间的变化会因项目而异，但这里有一些来自BananaBread的示例数字，这是一个完整但紧凑的游戏引擎，由112个文件和95，287行代码组成。在左侧，我们有编译步骤的构建时间，即使用项目的默认步骤将源文件编译为对象文件`-O3`（所有时间都规范化为 fastcomp）。正如你所看到的，WebAssembly后端的编译步骤需要稍长的时间，这是有道理的，因为我们在这个阶段正在做更多的工作 - 而不是像fastcomp那样只是编译源代码到位码，我们还将比特码编译为WebAssembly。
 

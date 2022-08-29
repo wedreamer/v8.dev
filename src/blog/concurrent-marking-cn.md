@@ -24,15 +24,15 @@
 
 我们可以将标记视为[图形遍历](https://en.wikipedia.org/wiki/Graph_traversal).堆上的对象是关系图的节点。从一个对象到另一个对象的指针是图形的边缘。给定图中的一个节点，我们可以使用[隐藏类](/blog/fast-properties)的对象。
 
-![Figure 1. Object graph](/\_img/concurrent-marking/00.svg)
+![Figure 1. Object graph](../_img/concurrent-marking/00.svg)
 
 V8 使用每个对象的两个标记位和一个标记工作列表来实现标记。两个标记位编码三种颜色：白色（`00`），灰色（`10`）和黑色（`11`).最初，所有物体都是白色的，这意味着收藏家还没有发现它们。当收集器发现白色物体并将其推到标记工作清单上时，该物体将变为灰色。当收集器将灰色对象从标记工作清单中弹出并访问其所有字段时，该对象将变为黑色。这种方案称为三色标记。当不再有灰色对象时，标记完成。所有剩余的白色物体都无法访问，可以安全地回收。
 
-![Figure 2. Marking starts from the roots](/\_img/concurrent-marking/01.svg)
+![Figure 2. Marking starts from the roots](../_img/concurrent-marking/01.svg)
 
-![Figure 3. The collector turns a grey object into black by processing its pointers](/\_img/concurrent-marking/02.svg)
+![Figure 3. The collector turns a grey object into black by processing its pointers](../_img/concurrent-marking/02.svg)
 
-![Figure 4. The final state after marking is finished](/\_img/concurrent-marking/03.svg)
+![Figure 4. The final state after marking is finished](../_img/concurrent-marking/03.svg)
 
 请注意，上述标记算法仅在标记过程中暂停应用程序时才有效。如果我们允许应用程序在标记期间运行，则应用程序可以更改图形并最终诱骗收集器释放活动对象。
 
@@ -40,11 +40,11 @@ V8 使用每个对象的两个标记位和一个标记工作列表来实现标�
 
 对于大型堆，一次执行所有标记可能需要几百毫秒。
 
-![](/\_img/concurrent-marking/04.svg)
+![](../_img/concurrent-marking/04.svg)
 
 这种长时间的暂停可能会使应用程序无响应，并导致用户体验不佳。2011年，V8从停止世界标记切换到增量标记。在增量标记期间，垃圾回收器将标记工作拆分为较小的块，并允许应用程序在块之间运行：
 
-![](/\_img/concurrent-marking/05.svg)
+![](../_img/concurrent-marking/05.svg)
 
 垃圾回收器选择在每个块中执行多少增量标记工作，以匹配应用程序的分配速率。在常见情况下，这大大提高了应用程序的响应能力。对于内存压力下的大型堆，当收集器尝试跟上分配时，仍可能出现长时间的暂停。
 
@@ -68,11 +68,11 @@ write_barrier(object, field_offset, value) {
 
 **平行**标记发生在主线程和工作线程上。应用程序在整个并行标记阶段暂停。它是停止世界标记的多线程版本。
 
-![](/\_img/concurrent-marking/06.svg)
+![](../_img/concurrent-marking/06.svg)
 
 **并发的**标记主要发生在工作线程上。在进行并发标记时，应用程序可以继续运行。
 
-![](/\_img/concurrent-marking/07.svg)
+![](../_img/concurrent-marking/07.svg)
 
 以下两节介绍我们如何在 V8 中添加对并行和并发标记的支持。
 
@@ -80,7 +80,7 @@ write_barrier(object, field_offset, value) {
 
 在并行标记期间，我们可以假设应用程序未同时运行。这大大简化了实现，因为我们可以假设对象图是静态的并且不会更改。为了并行标记对象图，我们需要使垃圾回收器数据结构线程安全，并找到一种在线程之间有效共享标记工作的方法。下图显示了并行标记中涉及的数据结构。箭头指示数据流的方向。为简单起见，该图省略了堆碎片整理所需的数据结构。
 
-![Figure 5. Data structures for parallel marking](/\_img/concurrent-marking/08.svg)
+![Figure 5. Data structures for parallel marking](../_img/concurrent-marking/08.svg)
 
 请注意，线程仅从对象图中读取，从不更改它。对象的标记位和标记工作列表必须支持读取和写入访问。
 
@@ -90,7 +90,7 @@ write_barrier(object, field_offset, value) {
 
 权衡空间的极端方面是（a）使用完全并发的数据结构以获得最佳共享，因为所有对象都可以共享，以及（b）使用完全线程本地的数据结构，其中没有对象可以共享，优化线程本地吞吐量。图 6 显示了 V8 如何通过使用基于线程本地插入和删除段的标记工作列表来平衡这些需求。一旦段已满，它就会发布到可用于窃取的共享全局池。通过这种方式，V8 允许标记线程尽可能长时间地在本地运行而无需任何同步，并且仍然处理单个线程到达新的对象子图的情况，而另一个线程在完全耗尽其本地段时会挨饿。
 
-![Figure 6. Marking worklist](/\_img/concurrent-marking/09.svg)
+![Figure 6. Marking worklist](../_img/concurrent-marking/09.svg)
 
 ## 并发标记
 
@@ -152,7 +152,7 @@ write_barrier(object, field_offset, value);
 
 某些操作（例如代码修补）需要对对象进行独占访问。早期，我们决定避免每个对象锁，因为它们可能导致优先级反转问题，其中主线程必须等待在持有对象锁时取消调度的工作线程。我们不是锁定对象，而是允许工作线程从访问对象中解救出来。工作线程通过将对象推送到救助工作列表中来实现此目的，该列表仅由主线程处理：
 
-![Figure 7. The bailout worklist](/\_img/concurrent-marking/10.svg)
+![Figure 7. The bailout worklist](../_img/concurrent-marking/10.svg)
 
 工作线程可以拯救优化的代码对象、隐藏类和弱集合，因为访问它们需要锁定或昂贵的同步协议。
 
@@ -194,12 +194,12 @@ if (atomic_color_transition(object, grey, black)) {
 
 我们将并发标记集成到现有的增量标记基础结构中。主线程通过扫描根部并填写标记工作列表来启动标记。之后，它会在工作线程上发布并发标记任务。工作线程通过协作排出标记工作列表，帮助主线程更快地进行标记。偶尔，主线程通过处理救助工作清单和标记工作清单来参与标记。一旦标记工作列表变为空，主线程就会完成垃圾回收。在定版过程中，主线程会重新扫描根部，并可能发现更多的白色物体。这些对象在工作线程的帮助下并行标记。
 
-![](/\_img/concurrent-marking/11.svg)
+![](../_img/concurrent-marking/11.svg)
 
 ## 结果
 
 我们[现实世界的基准框架](/blog/real-world-performance)显示，在移动设备和桌面设备上，每个垃圾回收周期的主线程标记时间分别减少了约 65% 和 70%。
 
-![Time spent in marking on the main thread (lower is better)](/\_img/concurrent-marking/12.svg)
+![Time spent in marking on the main thread (lower is better)](../_img/concurrent-marking/12.svg)
 
 并发标记还可以减少 Node.js中的垃圾回收卡顿。这一点尤其重要，因为Node.js从未实现空闲时间垃圾回收调度，因此永远无法在非卡顿关键阶段隐藏标记时间。节点.js v10 中提供的并发标记。

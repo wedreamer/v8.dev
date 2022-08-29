@@ -22,7 +22,7 @@
 
 V8 已经有一个跟踪基础结构，用于[集成电路](https://mathiasbynens.be/notes/shapes-ics)和[地图](https://v8.dev/blog/fast-properties)它可以使用[集成电路浏览器](https://v8.dev/tools/v8.7/ic-explorer.html)和映射事件使用[地图处理器](https://v8.dev/tools/v8.7/map-processor.html).然而，以前的工具不允许我们全面分析地图和IC，现在系统分析仪可以做到这一点。
 
-![Indicium](/\_img/system-analyzer/indicium-logo.png)
+![Indicium](../_img/system-analyzer/indicium-logo.png)
 
 ## 个案研究
 
@@ -101,7 +101,7 @@ console.timeEnd('snippet2');
 
 代码段 1 的运行速度比代码段 2 快约 3 倍。唯一的区别是我们使用负值`x`和`y`属性`Point`代码段 2 中的对象。
 
-![Performance analysis of snippets.](/\_img/system-analyzer/initial-program-performance.png)
+![Performance analysis of snippets.](../_img/system-analyzer/initial-program-performance.png)
 
 为了分析这种性能差异，我们可以使用 V8 附带的各种日志记录选项。这就是系统分析仪的亮点。它可以显示日志事件，并将它们与地图事件链接在一起，让我们探索隐藏在V8中的魔力。
 
@@ -112,9 +112,9 @@ console.timeEnd('snippet2');
 *   一个IC面板，用于获取有关IC事件的统计信息，
 *   一个“源”面板，用于在脚本上显示地图/IC 文件位置。
 
-![System Analyzer Overview](/\_img/system-analyzer/system-analyzer-overview.png)
+![System Analyzer Overview](../_img/system-analyzer/system-analyzer-overview.png)
 
-![Group IC events by function name to get in depth information about the IC events associated with the dotProduct.](/\_img/system-analyzer/case1\_1.png)
+![Group IC events by function name to get in depth information about the IC events associated with the dotProduct.](../_img/system-analyzer/case1\_1.png)
 
 我们正在分析函数`dotProduct`可能会导致此性能差异。因此，我们按函数名称对 IC 事件进行分组，以获取有关与`dotProduct`功能。
 
@@ -122,13 +122,13 @@ console.timeEnd('snippet2');
 
 我们想知道为什么要为同一类型的对象创建多个 Map 形状。为此，我们切换有关 IC 状态的信息按钮，以获取有关 Map 地址从未初始化到单态的更多信息。
 
-![The map transition tree associated with the monomorphic IC state.](/\_img/system-analyzer/case1\_2.png)
+![The map transition tree associated with the monomorphic IC state.](../_img/system-analyzer/case1\_2.png)
 
-![The map transition tree associated with the polymorphic IC state.](/\_img/system-analyzer/case1\_3.png)
+![The map transition tree associated with the polymorphic IC state.](../_img/system-analyzer/case1\_3.png)
 
 对于单态 IC 状态，我们可以可视化过渡树，并看到我们只是动态添加两个属性`x`和`y`但是当涉及到多态IC状态时，我们有一个包含三个属性的新Map。`isNegative`,`x`和`y`.
 
-![The Map panel communicates the file position information to highlight file positions on the Source panel.](/\_img/system-analyzer/case1\_4.png)
+![The Map panel communicates the file position information to highlight file positions on the Source panel.](../_img/system-analyzer/case1\_4.png)
 
 我们单击“地图”面板的文件位置部分以查看此位置`isNegative`属性添加到源代码中，可以使用此见解来解决性能回归问题。
 
@@ -156,7 +156,7 @@ class Point {
 
 在更新的迹线中，我们看到多态IC状态被避免了，因为我们没有为同一类型的对象创建多个映射。
 
-![The map transition tree of the modified Point object.](/\_img/system-analyzer/case2\_1.png)
+![The map transition tree of the modified Point object.](../_img/system-analyzer/case2\_1.png)
 
 ## 系统分析器
 
@@ -166,9 +166,9 @@ class Point {
 
 “时间轴”面板允许按时间进行选择，从而可以跨离散时间点或选定时间范围的 IC/映射状态进行可视化。它支持过滤功能，例如放大/缩小所选时间范围的日志事件。
 
-![Timeline panel overview](/\_img/system-analyzer/timeline-panel.png)
+![Timeline panel overview](../_img/system-analyzer/timeline-panel.png)
 
-![Timeline panel overview (Cont.)](/\_img/system-analyzer/timeline-panel2.png)
+![Timeline panel overview (Cont.)](../_img/system-analyzer/timeline-panel2.png)
 
 ### 地图面板
 
@@ -179,27 +179,27 @@ class Point {
 
 “地图”面板可显示所选地图的过渡树。通过地图详细信息子面板显示的所选地图的元数据。可以使用提供的界面搜索与映射地址关联的特定过渡树。从“地图过渡”子面板上方的“统计信息”子面板中，我们可以看到有关导致地图过渡的属性和地图事件类型的统计信息。
 
-![Map panel overview](/\_img/system-analyzer/map-panel.png)
+![Map panel overview](../_img/system-analyzer/map-panel.png)
 
-![Stats panel overview](/\_img/system-analyzer/stats-panel.png)
+![Stats panel overview](../_img/system-analyzer/stats-panel.png)
 
 ### 集成电路面板
 
 IC 面板显示有关特定时间范围内的 IC 事件的统计信息，这些统计信息通过“时间轴”面板进行过滤。此外，IC面板允许根据各种选项（类型，类别，地图，文件位置）对IC事件进行分组。在分组选项中，地图和文件位置分组选项分别与地图和源代码面板交互，以显示地图的过渡树并突出显示与 IC 事件关联的文件位置。
 
-![IC panel Overview](/\_img/system-analyzer/ic-panel.png)
+![IC panel Overview](../_img/system-analyzer/ic-panel.png)
 
-![IC panel overview (Cont.)](/\_img/system-analyzer/ic-panel2.png)
+![IC panel overview (Cont.)](../_img/system-analyzer/ic-panel2.png)
 
-![IC panel Overview (Cont.)](/\_img/system-analyzer/ic-panel3.png)
+![IC panel Overview (Cont.)](../_img/system-analyzer/ic-panel3.png)
 
-![IC panel overview (Cont.)](/\_img/system-analyzer/ic-panel4.png)
+![IC panel overview (Cont.)](../_img/system-analyzer/ic-panel4.png)
 
 ### “源”面板
 
 “源”面板显示加载的脚本，并带有可单击的标记，以发出自定义事件，从而在自定义面板中选择映射和 IC 日志事件。可以从向下钻取栏选择加载的脚本。从“地图”面板和 IC 面板中选择文件位置会在源代码面板上突出显示所选文件位置。
 
-![Source panel Overview](/\_img/system-analyzer/source-panel.png)
+![Source panel Overview](../_img/system-analyzer/source-panel.png)
 
 ### 确认
 

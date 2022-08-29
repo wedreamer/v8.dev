@@ -17,11 +17,11 @@
 
 JavaScript 函数不必要地保留了外部函数及其元数据（称为`SharedFunctionInfo`或`SFI`）活着。特别是在依赖于短期 IIFE 的功能繁重的代码中，这可能会导致虚假的内存泄漏。在此更改之前，活动`Context`（即函数激活的堆上表示）保持`SFI`创建上下文的函数处于活动状态：
 
-![](/\_img/v8-release-68/context-jsfunction-before.svg)
+![](../_img/v8-release-68/context-jsfunction-before.svg)
 
 通过让`Context`指向`ScopeInfo`对象，其中包含调试所需的精简信息，我们可以打破对`SFI`.
 
-![](/\_img/v8-release-68/context-jsfunction-after.svg)
+![](../_img/v8-release-68/context-jsfunction-after.svg)
 
 我们已经观察到，在一组前 10 个页面上，移动设备上的 V8 内存提高了 3%。
 
@@ -43,7 +43,7 @@ JavaScript 函数不必要地保留了外部函数及其元数据（称为`Share
 
 分拣性能`TypedArray`不带比较函数的 s 保持不变，而使用比较函数进行排序时，加速速度最高可达 2.5×。
 
-![](/\_img/v8-release-68/typedarray-sort.svg)
+![](../_img/v8-release-68/typedarray-sort.svg)
 
 ## WebAssembly
 

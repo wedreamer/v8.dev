@@ -41,8 +41,8 @@ V8 JIT代码通常调用内置。内置组件本质上是作为 VM 的一部分�
 
 为了避免频繁的错误预测成本，并避免在 x86-64 上尽可能不必要地依赖分支预测，我们决定暂时将内置内容复制到具有足够内存的台式计算机上的 V8 指针压缩笼中。这使复制的内置代码接近动态生成的代码。性能结果在很大程度上取决于设备配置，但以下是我们的性能机器人的一些结果：
 
-![Browsing benchmarks recorded from live pages](/\_img/short-builtin-calls/v8-browsing.svg)
+![Browsing benchmarks recorded from live pages](../_img/short-builtin-calls/v8-browsing.svg)
 
-![Benchmark score improvement](/\_img/short-builtin-calls/benchmarks.svg)
+![Benchmark score improvement](../_img/short-builtin-calls/benchmarks.svg)
 
 取消嵌入内置组件确实会将受影响设备上每个 V8 实例的内存使用量增加 1.2 到 1.4 MiB。作为一个更好的长期解决方案，我们正在研究将JIT代码分配到更接近Chrome二进制文件的位置。通过这种方式，我们可以重新嵌入内置组件以重新获得内存优势，同时进一步提高从V8生成的代码到C++代码的调用的性能。

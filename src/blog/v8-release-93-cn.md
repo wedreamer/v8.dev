@@ -23,7 +23,7 @@
 
 批量编译将整体编译时间（Ignition + Sparkplug）减少了44%，而不会使JavaScript执行倒退。如果我们只看编译Sparkplug代码的成本，影响显然更大，例如，减少82%的`docs_scrolling`Win 10 上的基准测试（见下文）。令人惊讶的是，批处理编译将编译性能提高了比 W^X 更高的成本，因为无论如何，将类似的操作批处理在一起往往对 CPU 更好。在下面的图表中，您可以看到W^X对编译时间（Ignition + Sparkplug）的影响，以及批量编译如何减轻这种开销。
 
-![Benchmarks](/\_img/v8-release-93/sparkplug.svg)
+![Benchmarks](../_img/v8-release-93/sparkplug.svg)
 
 ### `Object.hasOwn`
 
@@ -59,7 +59,7 @@ console.log(error.cause === parentError);
 
 因此，我们决定在Android上禁用V8的Spectre代码生成缓解措施。这些缓解措施不如站点隔离有效，并且会带来性能成本。禁用它们将使Android与桌面平台相提并论，自V8 v7.0以来它们一直处于关闭状态。通过禁用这些缓解措施，我们看到了Android基准测试性能的一些显着改进。
 
-![Performance improvements](/\_img/v8-release-93/code-mitigations.svg)
+![Performance improvements](../_img/v8-release-93/code-mitigations.svg)
 
 ## V8 接口
 

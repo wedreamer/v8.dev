@@ -38,7 +38,7 @@ console.log(m.indices[2]); // Index 2 is the 2nd capture group.
 
 访问`super`属性（例如，`super.x`） 通过使用 V8 的内联缓存系统和 TurboFan 中优化的代码生成进行了优化。随着这些变化，`super`属性访问现在更接近于常规属性访问，如下图所示。
 
-![Compare super property access to regular property access, optimized](/\_img/fast-super/super-opt.svg)
+![Compare super property access to regular property access, optimized](../_img/fast-super/super-opt.svg)
 
 请参阅[专门的博客文章](https://v8.dev/blog/fast-super)了解更多详情。
 
@@ -98,7 +98,7 @@ console.timeEnd();
 
 在这个简化的微基准上，我们看到了以下改进：
 
-![Microbenchmark comparison](/\_img/v8-release-90/js-to-wasm.svg)
+![Microbenchmark comparison](../_img/v8-release-90/js-to-wasm.svg)
 
 该功能仍处于实验阶段，可以通过`--turbo-inline-js-wasm-calls`旗。
 

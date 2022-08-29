@@ -46,13 +46,13 @@ V8的Ignition解释器背后的最初动机是减少移动设备上的内存消�
 
 V8 团队使用[遥测 - 弹射器](https://catapult.gsrc.io/telemetry)框架。[以前](/blog/real-world-performance)在这篇博客中，我们讨论了为什么使用来自实际测试的数据来推动我们的性能优化工作以及我们如何使用它如此重要。[网页回放](https://github.com/chromium/web-page-replay)与遥测一起执行此操作。切换到Ignition和TurboFan显示了这些实际测试用例的性能改进。具体来说，新的管道可以显著加快知名网站的用户交互故事测试速度：
 
-![Reduction in time spent in V8 for user interaction benchmarks](/\_img/launching-ignition-and-turbofan/improvements-per-website.png)
+![Reduction in time spent in V8 for user interaction benchmarks](../_img/launching-ignition-and-turbofan/improvements-per-website.png)
 
 虽然 Speedometer 是一个合成基准测试，但我们之前已经发现，与其他综合基准测试相比，它在近似现代 JavaScript 的实际工作负载方面做得更好。切换到点火和TurboFan可将V8的速度计分数提高5%-10%，具体取决于平台和设备。
 
 新的管道还加快了服务器端JavaScript的速度。[阿克美尔](https://github.com/acmeair/acmeair-nodejs)，Node.js的基准测试，模拟虚构航空公司的服务器后端实现，使用V8 v5.9的运行速度提高了10%以上。
 
-![Improvements on Web and Node.js benchmarks](/\_img/launching-ignition-and-turbofan/benchmark-scores.png)
+![Improvements on Web and Node.js benchmarks](../_img/launching-ignition-and-turbofan/benchmark-scores.png)
 
 Ignition和TurboFan还减少了V8的整体内存占用。在Chrome M59中，新的管道将V8在台式机和高端移动设备上的内存占用量减少了5-10%。这种减少是带来点火内存节省的结果，这些内存已经[以前涵盖的内容](/blog/ignition-interpreter)在本博客中，V8 支持的所有设备和平台。
 

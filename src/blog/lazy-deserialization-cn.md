@@ -27,7 +27,7 @@ TL;DR：最近默认在[V8 v6.4](/blog/v8-release-64)，每个浏览器选项卡
 
 快照包含完全初始化新隔离所需的一切，包括语言常量（例如`undefined`value），解释器使用的内部字节码处理程序，内置对象（例如，`String`），以及安装在内置对象上的函数（例如，`String.prototype.replace`） 及其可执行文件`Code`对象。
 
-![Startup snapshot size in bytes from 2016-01 to 2017-09. The x-axis shows V8 revision numbers.](/\_img/lazy-deserialization/startup-snapshot-size.png)
+![Startup snapshot size in bytes from 2016-01 to 2017-09. The x-axis shows V8 revision numbers.](../_img/lazy-deserialization/startup-snapshot-size.png)
 
 在过去两年中，快照的大小几乎增加了两倍，从 2016 年初的大约 600 KB 增加到今天的 1500 KB 以上。这种增长的绝大部分来自序列化`Code`对象，它们的数量都有所增加（例如，随着语言规范的发展和增长，最近通过对JavaScript语言的添加）;和大小（由新的[CodeStubAssembler](/blog/csa)管道作为本机代码提供，而不是更紧凑的字节码或最小化的JS格式）。
 
@@ -57,7 +57,7 @@ TL;DR：最近默认在[V8 v6.4](/blog/v8-release-64)，每个浏览器选项卡
 
 我们通过在Android设备上使用Chrome 65加载前1000个最受欢迎的网站来评估内存节省，无论是否使用延迟反序列化。
 
-![](/\_img/lazy-deserialization/memory-savings.png)
+![](../_img/lazy-deserialization/memory-savings.png)
 
 平均而言，V8 的堆大小减少了 540 KB，其中 25% 的测试站点节省了 620 KB 以上，50% 的站点节省了 540 KB 以上，75% 的站点节省了 420 KB 以上。
 

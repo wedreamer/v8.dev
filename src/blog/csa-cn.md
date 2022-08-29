@@ -11,7 +11,7 @@
 
 ***
 
-在这篇文章中，我们想介绍CodeStubAssembler（CSA），这是V8中的一个组件，在实现一些目标方面非常有用。[大](/blog/optimizing-proxies) [性能](https://twitter.com/v8js/status/918119002437750784) [胜利](https://twitter.com/\_gsathya/status/900188695721984000)在最近几个 V8 版本中。CSA还显著提高了V8团队在低级快速优化JavaScript功能的能力，提高了团队的开发速度。
+在这篇文章中，我们想介绍CodeStubAssembler（CSA），这是V8中的一个组件，在实现一些目标方面非常有用。[大](/blog/optimizing-proxies) [性能](https://twitter.com/v8js/status/918119002437750784) [胜利](https://twitter.com../_gsathya/status/900188695721984000)在最近几个 V8 版本中。CSA还显著提高了V8团队在低级快速优化JavaScript功能的能力，提高了团队的开发速度。
 
 ## V8 中内置和手写组件的简要历史
 
@@ -35,7 +35,7 @@ V8 开发人员多年来一直纠结于两难境地：是否有可能创建具�
 
 这种功能组合使得手写组件内置的强大且可维护的替代方案首次成为可能。该团队构建了一个新的V8组件- 称为CodeStubAssembler或CSA - 它定义了一种基于TurboFan后端构建的可移植汇编语言。CSA添加了一个API来直接生成TurboFan机器级IR，而无需编写和解析JavaScript或应用TurboFan的JavaScript特定优化。虽然这种快速的代码生成路径只有 V8 开发人员才能用于在内部加速 V8 引擎，但这种以跨平台方式生成优化汇编代码的有效路径直接有利于所有开发人员在使用 CSA 构建的内置组件中的 JavaScript 代码，包括 V8 解释器的性能关键字节码处理程序，[点火](/docs/ignition).
 
-![The CSA and JavaScript compilation pipelines](/\_img/csa/csa.svg)
+![The CSA and JavaScript compilation pipelines](../_img/csa/csa.svg)
 
 CSA 接口包括非常低级的操作，对于任何曾经编写过汇编代码的人来说都很熟悉。例如，它包括“从给定地址加载此对象指针”和“将这两个 32 位数字相乘”等功能。CSA 在 IR 级别具有类型验证，可在编译时而不是运行时捕获许多正确性错误。例如，它可以确保 V8 开发人员不会意外地使用从内存加载的对象指针作为 32 位乘法的输入。这种类型验证对于手写的程序集存根根本无法实现。
 

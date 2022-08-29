@@ -81,11 +81,11 @@
 
 虽然以前的Chrome版本具有流式解析和编译功能，但由于历史原因，从网络传入的脚本源数据始终必须先进入Chrome主线程，然后再转发到主线程。这意味着，通常，流式解析器会等待已经从网络到达的数据，但尚未转发到流式处理任务，因为它被主线程上发生的其他事情（例如HTML解析，布局或其他JavaScript执行）阻止。
 
-![Stalled background parsing tasks in Chrome 74 and older](/\_img/v8-release-75/before.jpg)
+![Stalled background parsing tasks in Chrome 74 and older](../_img/v8-release-75/before.jpg)
 
 在Chrome 75中，我们将网络“数据管道”直接连接到V8，允许我们在流解析期间直接读取网络数据，跳过对主线程的依赖。
 
-![In Chrome 75+, background parsing tasks are no longer blocked by activity on the main thread.](/\_img/v8-release-75/after.jpg)
+![In Chrome 75+, background parsing tasks are no longer blocked by activity on the main thread.](../_img/v8-release-75/after.jpg)
 
 这使我们能够更早地完成流式编译，从而使用流式编译缩短页面的加载时间，并减少并发（但停滞）流式分析任务的数量，从而减少内存消耗。
 

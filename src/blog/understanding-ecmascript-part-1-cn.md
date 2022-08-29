@@ -263,7 +263,7 @@ o.hasOwnProperty('bar'); // false
 
 抽象操作委托给其他抽象操作（见下图），但基于这篇博客文章，我们应该能够弄清楚它们的作用。我们将遇到属性描述符，这只是另一种规范类型。
 
-![Function call graph starting from Object.prototype.hasOwnProperty](/\_img/understanding-ecmascript-part-1/call-graph.svg)
+![Function call graph starting from Object.prototype.hasOwnProperty](../_img/understanding-ecmascript-part-1/call-graph.svg)
 
 ## 总结
 

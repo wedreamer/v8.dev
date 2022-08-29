@@ -18,7 +18,7 @@
 
 异步函数现在的速度大约与使用 promise 编写的相同代码一样快。异步函数的执行性能翻了两番，根据我们的[微模板标记](https://codereview.chromium.org/2577393002).同期，整体承诺业绩也翻了一番。
 
-![Async performance improvements in V8 on Linux x64](/\_img/v8-release-57/async.png)
+![Async performance improvements in V8 on Linux x64](../_img/v8-release-57/async.png)
 
 ### ES2015 的持续改进
 

@@ -33,7 +33,7 @@ doSomething(callback.bind(someObj));
 
 由于[黄彼得](https://twitter.com/peterwmwong)的最新贡献，[`WeakMap`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakMap)和[`WeakSet`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakSet)现在使用[CodeStubAssembler](/blog/csa)，从而全面提高高达 5× 的性能。
 
-![](/\_img/v8-release-64/weak-collection.svg)
+![](../_img/v8-release-64/weak-collection.svg)
 
 作为 V8 的一部分[持续的努力](https://bugs.chromium.org/p/v8/issues/detail?id=1956)为了提高阵列内置的性能，我们改进了`Array.prototype.slice`性能 ~4×通过使用 CodeStubAssembler 重新实现它。此外，调用`Array.prototype.map`和`Array.prototype.filter`现在，许多案例都内联了内联，使它们具有与手写版本相媲美的性能配置文件。
 
@@ -43,7 +43,7 @@ doSomething(callback.bind(someObj));
 
 V8 的内置代码对象和字节码处理程序现在从快照中延迟反序列化，这可以显著减少每个隔离项消耗的内存。Chrome 中的基准测试显示，在浏览常见网站时，每个标签页可节省数百 KB。
 
-![](/\_img/v8-release-64/codespace-consumption.svg)
+![](../_img/v8-release-64/codespace-consumption.svg)
 
 请留意明年初关于这个主题的专门博客文章。
 

@@ -20,7 +20,7 @@ V8 团队非常重视 JavaScript 向一种越来越富有表现力和定义明�
 
 当 TC39 决定更频繁地发布 JavaScript 规范的更新时，该语言的最新版本成为主要的草稿版本。尽管 ECMAScript 规范的版本仍然每年生产和批准，但 V8 实现了最近批准的版本（例如 ES2015）的组合，这些功能与标准化非常接近，可以安全地实现（例如幂运算符和`Array.prototype.includes()`来自ES2016候选草案），以及来自最新草案的错误修复和Web兼容性修订的集合。这种方法的部分理由是，浏览器中的语言实现应该与规范匹配，即使它是需要更新的规范。事实上，实现规范的已批准版本的过程通常会发现构成规范下一版本的许多修复和说明。
 
-![Currently shipping parts of the evolving ECMAScript specification](/\_img/modern-javascript/shipped-features.png)
+![Currently shipping parts of the evolving ECMAScript specification](../_img/modern-javascript/shipped-features.png)
 
 例如，在实现 ES2015 时[正则表达式粘性标志](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/sticky)，V8团队发现ES2015规范的语义打破了许多现有站点（包括所有使用2.x.x版本的流行站点）[XRegExp](https://github.com/slevithan/xregexp)库）。由于兼容性是 Web 的基石，因此来自 V8 和 Safari JavaScriptCore 团队的工程师[提出修正案](https://github.com/tc39/ecma262/pull/511)根据 RegExp 规范来修复破损，这是由 TC39 商定的。该修正案要到 ES2017 才会出现在批准的版本中，但它仍然是 ECMAScript 语言的一部分，我们已经实现了它，以便发布 RegExp 粘性标志。
 

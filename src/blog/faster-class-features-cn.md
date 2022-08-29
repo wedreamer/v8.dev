@@ -24,9 +24,9 @@ title： “使用新的类功能更快地初始化实例”
 
 为了消除普通属性的分配和类字段的初始化之间的性能差距，我们更新了现有的[内联高速缓存 （IC） 系统](https://mathiasbynens.be/notes/shapes-ics)与后者一起工作。在 v9.7 之前，V8 始终使用成本高昂的运行时调用来初始化类字段。在 v9.7 中，当 V8 认为初始化模式足够可预测时，它使用新的 IC 来加快操作速度，就像它对普通属性的分配所做的那样。
 
-![Performance of initializations, optimized](/\_img/faster-class-features/class-fields-performance-optimized.svg)
+![Performance of initializations, optimized](../_img/faster-class-features/class-fields-performance-optimized.svg)
 
-![Performance of initializations, interpreted](/\_img/faster-class-features/class-fields-performance-interpreted.svg)
+![Performance of initializations, interpreted](../_img/faster-class-features/class-fields-performance-interpreted.svg)
 
 ### 类字段的原始实现
 
@@ -216,11 +216,11 @@ new B();
 
 在[规格](https://tc39.es/ecma262/#sec-privatemethodoraccessoradd)，则私有方法被描述为安装在实例上，但不安装在类上。但是，为了节省内存，V8 的实现将私有方法与私有品牌符号一起存储在与类关联的上下文中。调用构造函数时，V8 仅在实例中存储对该上下文的引用，并以自有品牌符号作为键。
 
-![Evaluation and instantiation of classes with private methods](/\_img/faster-class-features/class-evaluation-and-instantiation.svg)
+![Evaluation and instantiation of classes with private methods](../_img/faster-class-features/class-evaluation-and-instantiation.svg)
 
 当访问私有方法时，V8 从执行上下文开始遍历上下文链以查找类上下文，从找到的上下文中读取静态已知槽以获取类的私有品牌符号，然后检查实例是否具有由此品牌符号键入的属性，以查看实例是否从此类创建。如果品牌检查通过，V8 将从同一上下文中的另一个已知插槽加载私有方法并完成访问。
 
-![Access of private methods](/\_img/faster-class-features/access-private-methods.svg)
+![Access of private methods](../_img/faster-class-features/access-private-methods.svg)
 
 以以下代码片段为例：
 
@@ -265,7 +265,7 @@ Ldar <context>
 DefineKeyedOwnProperty <this>, r0, [0]
 ```
 
-![Performance of instance initializations of classes with different methods](/\_img/faster-class-features/private-methods-performance.svg)
+![Performance of instance initializations of classes with different methods](../_img/faster-class-features/private-methods-performance.svg)
 
 但是，有一个警告：如果该类是其构造函数调用的派生类`super()`，私有方法的初始化 - 在我们的例子中，私有品牌符号的安装 - 必须在之后进行`super()`返回：
 

@@ -35,7 +35,7 @@ const m1 = new Peak('Matterhorn', 4478);
 
 现在，V8 可以简单地将属性存储在附加到主对象的后备存储中。与直接存在于对象中的属性不同，此后备存储可以通过复制和替换指针来无限增长。但是，对属性的最快访问是通过避免该间接寻址并从对象的开头查看固定偏移量来实现的。下面，我展示了 V8 堆中具有两个对象内属性的普通 JavaScript 对象的布局。前三个词在每个对象中都是标准的（指向映射、属性支持存储和元素支持存储的指针）。您可以看到该对象无法“增长”，因为它很难与堆中的下一个对象相对应：
 
-![](/\_img/slack-tracking/property-layout.svg)
+![](../_img/slack-tracking/property-layout.svg)
 
 ：：：备注
 **注意：**我省略了物业后备商店的细节，因为目前唯一重要的是它可以随时用更大的商店替换。但是，它也是 V8 堆上的一个对象，并且像驻留在其中的所有对象一样具有映射指针。
@@ -189,7 +189,7 @@ const m1 = new Peak('Matterhorn', 4478);
 
 现在，地图树从初始地图中生长出来，每个属性都有一个分支从该点开始添加。我们称之为分支*转换*.在上面的初始地图的打印输出中，您是否看到过渡到带有标签“name”的下一张地图？到目前为止，整个地图树如下所示：
 
-![(X, Y, Z) means (instance size, number of in-object properties, number of unused properties).](/\_img/slack-tracking/root-map-1.svg)
+![(X, Y, Z) means (instance size, number of in-object properties, number of unused properties).](../_img/slack-tracking/root-map-1.svg)
 
 这些基于属性名称的转换是[“盲痣”](https://www.google.com/search?q=blind+mole\&tbm=isch)“的 JavaScript 在你身后构建它的映射。此初始映射也存储在函数中`Peak`，因此当它用作构造函数时，该映射可用于设置`this`对象。
 
@@ -245,19 +245,19 @@ const m7 = new Peak('Eiger', 3970);
 
 如果你想知道为什么我担心留下这些词，你需要了解一些关于垃圾收集器的背景。对象一个接一个地布局，V8 垃圾回收器通过一遍又一遍地走过它来跟踪内存中的东西。从内存中的第一个单词开始，它期望找到指向地图的指针。它从映射中读取实例大小，然后知道要前进到下一个有效对象的距离。对于某些类，它必须额外计算长度，但这就是它的全部内容。
 
-![](/\_img/slack-tracking/gc-heap-1.svg)
+![](../_img/slack-tracking/gc-heap-1.svg)
 
 在上图中，红色框是**地图**，以及填充对象实例大小的单词的白框。垃圾收集器可以通过从一个地图跳到另一个地图来“行走”堆。
 
 那么，如果地图突然更改其实例大小，会发生什么情况呢？现在，当GC（垃圾回收器）在堆中行走时，它会发现自己在看一个以前没有看到的单词。就我们而言`Peak`类，我们从占用13个单词更改为仅5个（我将“未使用的属性”单词涂成黄色）：
 
-![](/\_img/slack-tracking/gc-heap-2.svg)
+![](../_img/slack-tracking/gc-heap-2.svg)
 
-![](/\_img/slack-tracking/gc-heap-3.svg)
+![](../_img/slack-tracking/gc-heap-3.svg)
 
 如果我们巧妙地用**实例大小为 4 的“填充”映射**.这样，一旦它们暴露在遍历中，GC就会轻轻地走过它们。
 
-![](/\_img/slack-tracking/gc-heap-4.svg)
+![](../_img/slack-tracking/gc-heap-4.svg)
 
 这在 代码中表示`Factory::InitializeJSObjectBody()`:
 
@@ -287,7 +287,7 @@ void Factory::InitializeJSObjectBody(Handle<JSObject> obj, Handle<Map> map,
 
 下图反映了松弛跟踪**完成**对于此初始地图。请注意，实例大小现在是 20（5 个单词：映射、属性和元素数组，以及另外 2 个插槽）。松弛跟踪从初始映射开始尊重整个链。也就是说，如果初始映射的后代最终使用了所有 10 个初始额外属性，则初始映射将保留它们，并将它们标记为未使用：
 
-![(X, Y, Z) means (instance size, number of in-object properties, number of unused properties).](/\_img/slack-tracking/root-map-2.svg)
+![(X, Y, Z) means (instance size, number of in-object properties, number of unused properties).](../_img/slack-tracking/root-map-2.svg)
 
 现在，slack 跟踪已经完成，如果我们向其中一个属性添加另一个属性会发生什么情况`Peak`对象？
 
@@ -349,7 +349,7 @@ const m7 = new Peak('Eiger', 3970);
 
 下面显示了运行上述代码后的地图系列，当然，slack跟踪已完成：
 
-![(X, Y, Z) means (instance size, number of in-object properties, number of unused properties).](/\_img/slack-tracking/root-map-3.svg)
+![(X, Y, Z) means (instance size, number of in-object properties, number of unused properties).](../_img/slack-tracking/root-map-3.svg)
 
 ## 优化代码怎么样？
 
