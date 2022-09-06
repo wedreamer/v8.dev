@@ -17,7 +17,7 @@ title： 'Liftoff： 一个新的基准编译器，用于 V8 中的 WebAssembly'
 V8[版本6.9](/blog/v8-release-69)包括Liftoff，一个新的WebAssembly基线编译器。现在，默认情况下，在桌面系统上启用 Liftoff。本文详细介绍了添加另一个编译层的动机，并描述了 Liftoff 的实现和性能。
 
 <figure>
-  <img src="/_img/v8-liftoff.svg" width="256" height="256" alt="" loading="lazy">
+  <img src="../_img/v8-liftoff.svg" width="256" height="256" alt="" loading="lazy">
   <figcaption>Logo for Liftoff, V8’s WebAssembly baseline compiler</figcaption>
 </figure>
 

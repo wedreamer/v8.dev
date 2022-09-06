@@ -51,7 +51,7 @@ title： 'Sparkplug — 一个非优化的 JavaScript 编译器'
 
 进入Sparkplug：我们新的非优化JavaScript编译器，我们将与V8 v9.1一起发布，它坐落在Ignition解释器和TurboFan优化编译器之间。
 
-![The new compiler pipeline](/\_svg/sparkplug/pipeline.svg)
+![The new compiler pipeline](../\_svg/sparkplug/pipeline.svg)
 
 ## 快速编译器
 
@@ -82,7 +82,7 @@ Sparkplug做了一个巧妙的技巧，简化了大多数这些问题，即它�
 
 让我们倒退一点。堆栈帧是代码执行存储函数状态的方式;每当您调用新函数时，它都会为该函数的局部变量创建一个新的堆栈帧。堆栈帧由帧指针（标记其开始）和堆栈指针（标记其结束）定义：
 
-![A stack frame, with stack and frame pointers](/\_svg/sparkplug/basic-frame.svg)
+![A stack frame, with stack and frame pointers](../\_svg/sparkplug/basic-frame.svg)
 
 ：：： 备注
 
@@ -117,7 +117,7 @@ Sparkplug做了一个巧妙的技巧，简化了大多数这些问题，即它�
 
 当调用函数时，返回地址被推送到堆栈;当它返回时，函数会弹出它，以了解返回到的位置。然后，当该函数创建新帧时，它会将旧帧指针保存在堆栈上，并将新帧指针设置为其自己的堆栈帧的开头。因此，堆栈具有一系列帧指针，每个帧指针标记指向前一帧的帧的开始：
 
-![Stack frames for multiple calls](/\_svg/sparkplug/machine-frame.svg)
+![Stack frames for multiple calls](../\_svg/sparkplug/machine-frame.svg)
 
 ：：： 备注
 严格来说，这只是生成的代码所遵循的约定，而不是必需的。不过，这是一个非常普遍的。它唯一真正被破坏的时候是当堆栈帧被完全省略时，或者当调试侧表可以用来遍历堆栈帧时。
@@ -125,13 +125,13 @@ Sparkplug做了一个巧妙的技巧，简化了大多数这些问题，即它�
 
 这是所有类型函数的一般堆栈布局;然后有关于如何传递参数以及函数如何在其框架中存储值的约定。在 V8 中，我们有 JavaScript 帧的约定，即推送参数（包括接收器）[以相反的顺序](/blog/adaptor-frame)在调用函数之前在堆栈上，并且堆栈上的前几个插槽是：正在调用的当前函数;调用它的上下文;以及传递的参数数。这是我们的“标准”JS框架布局：
 
-![A V8 JavaScript stack frame](/\_svg/sparkplug/js-frame.svg)
+![A V8 JavaScript stack frame](../\_svg/sparkplug/js-frame.svg)
 
 此 JS 调用约定在优化帧和解释帧之间共享，例如，它允许我们在调试器的性能面板中分析代码时以最小的开销遍历堆栈。
 
 在Ignition解释器的情况下，约定变得更加明确。Ignition是一个基于寄存器的解释器，这意味着有虚拟寄存器（不要与机器寄存器混淆！）存储解释器的当前状态 - 这包括JavaScript函数局部变量（var/let/const声明）和临时值。这些寄存器存储在解释器的堆栈帧上，以及指向正在执行的字节码数组的指针，以及该数组中当前字节码的偏移量：
 
-![A V8 interpreter stack frame](/\_svg/sparkplug/interpreter-frame.svg)
+![A V8 interpreter stack frame](../\_svg/sparkplug/interpreter-frame.svg)
 
 Sparkplug有意创建并维护与解释器框架相匹配的框架布局;每当解释器存储寄存器值时，Sparkplug也会存储一个寄存器值。它这样做有几个原因：
 
@@ -146,7 +146,7 @@ Sparkplug有意创建并维护与解释器框架相匹配的框架布局;每当�
 
 因此，火花塞堆栈框架是：
 
-![A V8 Sparkplug stack frame](/\_svg/sparkplug/sparkplug-frame.svg)
+![A V8 Sparkplug stack frame](../\_svg/sparkplug/sparkplug-frame.svg)
 
 ## 遵从内置
 

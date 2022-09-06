@@ -92,7 +92,7 @@ V8 中有两个垃圾回收器。这[**主要 GC（标记紧凑）**](#major-gc)
 这些算法和优化中的大多数在垃圾回收文献中都很常见，并且可以在许多垃圾回收语言中找到。但最先进的垃圾收集已经走过了漫长的道路。衡量垃圾回收所花费时间的一个重要指标是主线程在执行 GC 时暂停的时间量。对于传统的“停止世界”垃圾收集器来说，这个时间确实可以加起来，而这个花在做GC上的时间会以页面卡顿和渲染和延迟不佳的形式直接减损用户体验。
 
 <figure>
-  <img src="/_img/v8-orinoco.svg" width="256" height="256" alt="" loading="lazy">
+  <img src="../_img/v8-orinoco.svg" width="256" height="256" alt="" loading="lazy">
   <figcaption>Logo for Orinoco, V8’s garbage collector</figcaption>
 </figure>
 

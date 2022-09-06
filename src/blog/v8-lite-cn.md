@@ -37,7 +37,7 @@
 为了优化 V8 的内存使用率，我们首先需要了解 V8 如何使用内存，以及哪些对象类型在 V8 的堆大小中占很大比例。我们使用了 V8 的[内存可视化](/blog/optimizing-v8-memory#memory-visualization)工具来跟踪许多典型网页中的堆组成。
 
 <figure>
-  <img src="/_img/v8-lite/memory-categorization.svg" width="950" height="440" alt="" loading="lazy">
+  <img src="../_img/v8-lite/memory-categorization.svg" width="950" height="440" alt="" loading="lazy">
   <figcaption>Percentage of V8’s heap used by different object types when loading Times of India.</figcaption>
 </figure>
 

@@ -83,7 +83,7 @@ Smi:        |____int32_value____|000000000000000000<b>0</b>|
 如果我们将 V8 的堆排列在其他地方的连续 4 GB 地址空间区域中，则**符号**从基极的 32 位偏移量唯一标识指针。
 
 <figure>
-  <img src="/_img/pointer-compression/heap-layout-1.svg" width="827" height="323" alt="" loading="lazy">
+  <img src="../_img/pointer-compression/heap-layout-1.svg" width="827" height="323" alt="" loading="lazy">
   <figcaption>Heap layout, base aligned to start</figcaption>
 </figure>
 
@@ -321,7 +321,7 @@ int64_t uncompressed_tagged = base + int64_t(compressed_tagged);
 此外，由于我们不再关心符号扩展Smi，因此此更改允许我们返回到堆布局v1。这是基数指向4GB预留开头的那个。
 
 <figure>
-  <img src="/_img/pointer-compression/heap-layout-1.svg" width="827" height="323" alt="" loading="lazy">
+  <img src="../_img/pointer-compression/heap-layout-1.svg" width="827" height="323" alt="" loading="lazy">
   <figcaption>Heap layout, base aligned to start</figcaption>
 </figure>
 

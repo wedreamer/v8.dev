@@ -15,12 +15,12 @@
 新管道建立在[点火](/docs/ignition)、V8 的解释器，以及[涡轮风扇](/docs/turbofan)，V8 最新的优化编译器。这些技术[应该](/blog/turbofan-jit) [是](/blog/ignition-interpreter) [熟悉](/blog/test-the-future)对于那些在过去几年中关注V8博客的人来说，但是切换到新的管道标志着两者的一个重要的新里程碑。
 
 <figure>
-  <img src="/_img/v8-ignition.svg" width="256" height="256" alt="" loading="lazy">
+  <img src="../_img/v8-ignition.svg" width="256" height="256" alt="" loading="lazy">
   <figcaption>Logo for Ignition, V8’s brand-new interpreter</figcaption>
 </figure>
 
 <figure>
-  <img src="/_img/v8-turbofan.svg" width="256" height="256" alt="" loading="lazy">
+  <img src="../_img/v8-turbofan.svg" width="256" height="256" alt="" loading="lazy">
   <figcaption>Logo for TurboFan, V8’s brand-new optimizing compiler</figcaption>
 </figure>
 
