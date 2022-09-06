@@ -211,7 +211,7 @@ CSA的缺点是它确实可以被认为是一种汇编语言。使用显式对�
 
 进入[V8 扭矩](/docs/torque).Torque是一种特定于领域的语言，具有类似TypeScript的语法，目前使用CSA作为其唯一的编译目标。扭矩允许与 CSA 几乎相同的控制水平，同时提供更高级别的结构，例如`while`和`for`循环。此外，它是强类型的，将来将包含安全检查，例如自动越界检查，为V8工程师提供更强大的保证。
 
-在V8 Torque中重写的第一个主要内置是[`TypedArray#sort`](/blog/v8-release-68)和[`Dataview`操作](/blog/dataview).两者都有一个额外的目的，即向Torque开发人员提供反馈，说明需要哪些语言功能，并且应该使用习语来有效地编写内置组件。在撰写本文时，有几个`JSArray`内置的自托管JavaScript回退实现被转移到Torque（例如`Array#unshift`），而其他的则被完全重写（例如`Array#splice`和`Array#reverse`).
+在V8 Torque中重写的第一个主要内置是[`TypedArray#sort`](./v8-release-68-cn.md)和[`Dataview`操作](/blog/dataview).两者都有一个额外的目的，即向Torque开发人员提供反馈，说明需要哪些语言功能，并且应该使用习语来有效地编写内置组件。在撰写本文时，有几个`JSArray`内置的自托管JavaScript回退实现被转移到Torque（例如`Array#unshift`），而其他的则被完全重写（例如`Array#splice`和`Array#reverse`).
 
 ### 移动`Array#sort`到扭矩
 
